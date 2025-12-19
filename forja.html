@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>مشغل القنوات</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root{
+      --bg-0:#0b1020;
+      --bg-1:#0f1831;
+      --card:rgba(255,255,255,.06);
+      --card-2:rgba(255,255,255,.08);
+      --border:rgba(255,255,255,.10);
+      --text:#f5f7ff;
+      --muted:rgba(245,247,255,.70);
+      --muted-2:rgba(245,247,255,.55);
+      --primary:#4361ee;
+      --primary-2:#4cc9f0;
+      --danger:#ff5a7a;
+
+      --radius:clamp(12px, 3vw, 16px);
+      --radius-sm:clamp(8px, 2vw, 12px);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    /* طبقة أساسية لتحسين التجربة على الأجهزة المحمولة */
+    * { 
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent; 
+    }
+    
+    html, body { 
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overscroll-behavior: none; /* لمنع سلوك الانزلاق الزائد على الأجهزة المحمولة */
+    }
+    
+    body{
+      font-family:"Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(76,201,240,.18), transparent 60%),
+                  radial-gradient(900px 500px at 90% 20%, rgba(67,97,238,.22), transparent 55%),
+                  linear-gradient(135deg, var(--bg-0), var(--bg-1));
+      background-attachment: fixed; /* لمنع تكرار الخلفية أثناء التمرير */
+      direction: rtl;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    /* تحسين عناصر التنقل والتفاعل العام */
+    a{ 
+      color:inherit;
+      text-decoration: none;
+    }
+    
+    .container{
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: clamp(12px, 3vw, 20px);
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px); /* للتوافق مع سفاري */
+    }
+
+    header{
+      padding: clamp(14px, 2vw, 18px);
+      margin-bottom: clamp(16px, 3vw, 22px);
+      text-align: center;
+    }
+    
+    header h1{
+      margin: 0 0 8px;
+      font-size: clamp(1.4rem, 2.2vw, 2.2rem);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--primary-2);
+      letter-spacing: .2px;
+    }
+    
+    header p{
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(0.9rem, 1.2vw, 1.02rem);
+    }
+
+    /* تحسين تخطيط المقاطع الرئيسية */
+    main{
+      display: flex;
+      gap: clamp(16px, 3vw, 22px);
+      flex-wrap: wrap;
+    }
+
+    .video-container{
+      flex: 3;
+      min-width: min(100%, 320px);
+      padding: clamp(14px, 2vw, 18px);
+    }
+
+    .video-wrapper{
+      background: #000;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+      position: relative;
+      aspect-ratio: 16/9; /* حفظ نسبة العرض إلى الارتفاع */
+    }
+    
+    video{
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* للتأكد من ظهور الفيديو بشكل صحيح */
+      background: #000;
+    }
+
+    /* تحسين معلومات الفيديو للتوافق مع الشاشات المختلفة */
+    .video-info{
+      margin-top: clamp(10px, 2vw, 14px);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    
+    .video-info h2{
+      margin: 0;
+      font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+      color: var(--text);
+      word-break: break-word;
+    }
+    
+    .video-meta{
+      color: var(--muted-2);
+      font-size: clamp(0.85rem, 1vw, 0.95rem);
+      margin-top: 4px;
+      word-break: break-all;
+    }
+
+    /* تحسين أزرار التحكم لتكون أكثر سهولة على الأجهزة اللمسية */
+    .controls{
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: clamp(8px, 1.5vw, 10px);
+      margin-top: clamp(10px, 1.5vw, 12px);
+    }
+
+    .btn{
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      padding: clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 14px);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      user-select: none;
+      font-size: clamp(0.9rem, 1.2vw, 0.98rem);
+      line-height: 1;
+      font-family: inherit;
+      touch-action: manipulation; /* تحسين الأداء على الأجهزة اللمسية */
+    }
+    
+    .btn:hover{ 
+      background: rgba(255,255,255,.10); 
+      transform: translateY(-1px); 
+    }
+    
+    .btn:active{ 
+      transform: translateY(0); 
+    }
+    
+    .btn.primary{
+      background: rgba(67,97,238,.22);
+      border-color: rgba(67,97,238,.45);
+    }
+    
+    .btn.primary:hover{
+      background: rgba(67,97,238,.30);
+      border-color: rgba(67,97,238,.60);
+    }
+
+    /* تحسين شريط التحكم بالصوت */
+    .volume{
+      display: flex;
+      align-items: center;
+      gap: clamp(6px, 1.2vw, 10px);
+      padding: clamp(8px, 1.5vw, 10px) clamp(10px, 1.5vw, 12px);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    
+    input[type="range"]{
+      width: clamp(80px, 15vw, 120px);
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* تحسين قائمة القنوات */
+    .channels-container{
+      flex: 2;
+      min-width: min(100%, 320px);
+      padding: clamp(14px, 2vw, 18px);
+    }
+
+    .search{
+      position: relative;
+      margin-bottom: clamp(10px, 2vw, 14px);
+    }
+    
+    .search input{
+      width: 100%;
+      padding: clamp(10px, 1.5vw, 12px) clamp(12px, 2vw, 14px) clamp(10px, 1.5vw, 12px) clamp(40px, 6vw, 44px); 
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      outline: none;
+      font-size: clamp(0.9rem, 1.2vw, 1rem);
+      font-family: inherit;
+    }
+    
+    .search input::placeholder{ 
+      color: var(--muted-2); 
+    }
+    
+    .search i{
+      position: absolute;
+      left: clamp(10px, 2vw, 14px);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted-2);
+      pointer-events: none;
+    }
+
+    /* تحسين أزرار التصفية */
+    .filters{
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(6px, 1.5vw, 10px);
+      margin-bottom: clamp(10px, 2vw, 14px);
+    }
+    
+    .chip{
+      border-radius: 999px;
+      padding: clamp(6px, 1.2vw, 8px) clamp(10px, 2vw, 14px);
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease;
+      font-size: clamp(0.85rem, 1vw, 0.95rem);
+      font-family: inherit;
+      touch-action: manipulation;
+    }
+    
+    .chip:hover{ 
+      background: rgba(255,255,255,.10); 
+    }
+    
+    .chip.active{
+      background: rgba(67,97,238,.28);
+      border-color: rgba(67,97,238,.60);
+    }
+
+    /* تحسين قائمة القنوات */
+    .list{
+      max-height: clamp(300px, 70vh, 520px);
+      overflow: auto;
+      padding-inline-end: 6px;
+      overscroll-behavior: contain; /* تحسين سلوك التمرير */
+    }
+
+    /* تحسين عناصر القنوات */
+    .item{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: clamp(10px, 1.5vw, 12px);
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: rgba(255,255,255,.04);
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .15s ease;
+      margin-bottom: clamp(8px, 1.5vw, 10px);
+    }
+    
+    .item:hover{
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.12);
+      transform: translateX(-3px);
+    }
+    
+    .item.active{
+      background: rgba(67,97,238,.22);
+      border-color: rgba(67,97,238,.55);
+    }
+    
+    .item .name{
+      font-weight: 600;
+      margin: 0;
+      font-size: clamp(0.95rem, 1.1vw, 1.02rem);
+      word-break: break-word;
+    }
+    
+    .item .url{
+      margin: 4px 0 0;
+      font-size: clamp(0.8rem, 1vw, 0.85rem);
+      color: var(--muted-2);
+      direction: ltr;
+      text-align: right;
+      unicode-bidi: plaintext;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: min(40ch, 100%);
+    }
+    
+    .badge{
+      font-size: clamp(0.8rem, 1vw, 0.85rem);
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(76,201,240,.12);
+      color: var(--primary-2);
+      border: 1px solid rgba(76,201,240,.25);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .empty{
+      padding: clamp(12px, 2vw, 14px);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.04);
+      border: 1px dashed rgba(255,255,255,.14);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* تذييل الصفحة */
+    footer{
+      margin-top: clamp(14px, 2vw, 18px);
+      padding: clamp(12px, 2vw, 14px);
+      text-align: center;
+      color: var(--muted);
+      font-size: clamp(0.85rem, 1vw, 0.95rem);
+    }
+    
+    footer .small{ 
+      font-size: clamp(0.8rem, 1vw, 0.9rem); 
+      color: var(--muted-2); 
+      margin-top: 6px; 
+    }
+
+    /* شاشة التحميل */
+    .loading{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+    }
+    
+    .loading[aria-hidden="false"]{ 
+      display: flex; 
+    }
+    
+    .loading-box{
+      width: min(420px, 92vw);
+      padding: clamp(14px, 2vw, 18px);
+      border-radius: var(--radius);
+      background: rgba(20,20,28,.65);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    
+    .spinner{
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
+      border: 5px solid rgba(255,255,255,.12);
+      border-top-color: var(--primary);
+      margin: 0 auto 12px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg);} }
+
+    /* تحسين شريط التمرير */
+    .list::-webkit-scrollbar{ 
+      width: clamp(6px, 1.5vw, 10px); 
+    }
+    
+    .list::-webkit-scrollbar-track{ 
+      background: rgba(255,255,255,.05); 
+      border-radius: 999px; 
+    }
+    
+    .list::-webkit-scrollbar-thumb{ 
+      background: rgba(67,97,238,.75); 
+      border-radius: 999px; 
+    }
+
+    /* تحسين التخطيط للشاشات المتوسطة والصغيرة */
+    @media (max-width: 1100px){
+      main{ 
+        flex-direction: column; 
+      }
+      
+      .video-container, .channels-container{ 
+        min-width: 100%; 
+      }
+    }
+
+    /* تحسينات إضافية للشاشات الصغيرة جدًا */
+    @media (max-width: 480px) {
+      .controls {
+        justify-content: center;
+      }
+      
+      .video-info {
+        text-align: center;
+        justify-content: center;
+      }
+      
+      .item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .item .badge {
+        align-self: flex-start;
+      }
+    }
+
+    /* دعم وضع الطباعة */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+      
+      .card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        background: white;
+      }
+      
+      .video-container, .controls, .btn {
+        display: none !important;
+      }
+    }
+
+    /* تقليل الحركة عند الحاجة */
+    @media (prefers-reduced-motion: reduce){
+      *, .item:hover, .btn:hover {
+        transition: none !important; 
+        animation: none !important; 
+        scroll-behavior: auto !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="card" aria-label="عنوان الصفحة">
+      <h1><i class="fa-solid fa-tv" aria-hidden="true"></i> مشغل القنوات</h1>
+      <p>واجهة بسيطة لعرض القنوات مع البحث والتصفية والتحكم بالصوت وملء الشاشة.</p>
+    </header>
+
+    <main>
+      <section class="video-container card" aria-label="مشغل الفيديو">
+        <div class="video-wrapper">
+          <video id="videoPlayer" controls playsinline preload="metadata">
+            <source src="" type="application/x-mpegURL" />
+            متصفحك لا يدعم تشغيل الفيديو.
+          </video>
+        </div>
+
+        <div class="video-info">
+          <div>
+            <h2 id="currentChannel">اختر قناة للمشاهدة</h2>
+            <div class="video-meta" id="currentUrl" aria-live="polite"></div>
+          </div>
+
+          <div class="controls" aria-label="أدوات التحكم">
+            <button id="playPauseBtn" class="btn primary" type="button" aria-label="تشغيل">
+              <i class="fa-solid fa-play" aria-hidden="true"></i>
+              <span>تشغيل</span>
+            </button>
+
+            <button id="muteBtn" class="btn" type="button" aria-label="كتم الصوت">
+              <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
+              <span>كتم</span>
+            </button>
+
+            <button id="fullscreenBtn" class="btn" type="button" aria-label="ملء الشاشة">
+              <i class="fa-solid fa-expand" aria-hidden="true"></i>
+              <span>ملء الشاشة</span>
+            </button>
+
+            <div class="volume" aria-label="مستوى الصوت">
+              <i class="fa-solid fa-volume-low" aria-hidden="true"></i>
+              <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1" aria-label="شريط الصوت" />
+              <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="channels-container card" aria-label="قائمة القنوات">
+        <div class="search">
+          <input id="searchInput" type="search" placeholder="ابحث عن قناة..." autocomplete="off" aria-label="البحث عن قنوات" />
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        </div>
+
+        <div class="filters" role="tablist" aria-label="تصفية القنوات">
+          <button class="chip active" type="button" data-category="all" aria-pressed="true">الكل</button>
+          <button class="chip" type="button" data-category="sports" aria-pressed="false">رياضة</button>
+          <button class="chip" type="button" data-category="movies" aria-pressed="false">أفلام</button>
+          <button class="chip" type="button" data-category="news" aria-pressed="false">أخبار</button>
+          <button class="chip" type="button" data-category="kids" aria-pressed="false">أطفال</button>
+          <button class="chip" type="button" data-category="general" aria-pressed="false">عامة</button>
+        </div>
+
+        <div class="list" id="channelsList" aria-live="polite">
+          <!-- سيتم ملؤه بواسطة جافاسكريبت -->
+        </div>
+      </aside>
+    </main>
+
+    <footer class="card">
+      <div>© <span id="year"></span> مشغل القنوات — جميع الحقوق محفوظة</div>
+      <div class="small">تنبيه: تحقّق من حقوق البث وروابط القنوات قبل الاستخدام.</div>
+    </footer>
+  </div>
+
+  <div id="loading" class="loading" aria-hidden="false" aria-label="جاري التحميل">
+    <div class="loading-box">
+      <div class="spinner" aria-hidden="true"></div>
+      <div style="color: var(--muted);">جاري تحميل القنوات...</div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // DOM
+      const videoPlayer = document.getElementById("videoPlayer");
+      const currentChannel = document.getElementById("currentChannel");
+      const currentUrl = document.getElementById("currentUrl");
+      const channelsList = document.getElementById("channelsList");
+      const searchInput = document.getElementById("searchInput");
+      const filterButtons = document.querySelectorAll(".chip");
+      const playPauseBtn = document.getElementById("playPauseBtn");
+      const muteBtn = document.getElementById("muteBtn");
+      const fullscreenBtn = document.getElementById("fullscreenBtn");
+      const volumeSlider = document.getElementById("volumeSlider");
+      const loading = document.getElementById("loading");
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // State
+      let channels = [];
+      let filteredChannels = [];
+      let currentCategory = "all";
+      let searchQuery = "";
+      let isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+      // الحفاظ على محتوى M3U كما هو
+      const m3uContent = `#EXTM3U
+#EXTINF:-1 tvg-id="" tvg-name="ONC Turkey mix" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC Turkey mix
+http://app.gogo-tv.com:2086/live/319957061G/27674/129851.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC Turkey Dubb" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC Turkey Dubb
+http://app.gogo-tv.com:2086/live/319957061G/27674/129850.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC REwayat" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC REwayat
+http://app.gogo-tv.com:2086/live/319957061G/27674/129849.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC plus" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC plus
+http://app.gogo-tv.com:2086/live/319957061G/27674/129848.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC premiere" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC premiere
+http://app.gogo-tv.com:2086/live/319957061G/27674/129847.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC ASia" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC ASia
+http://app.gogo-tv.com:2086/live/319957061G/27674/129846.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC Animation" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC Animation
+http://app.gogo-tv.com:2086/live/319957061G/27674/129845.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC Cartoon" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC Cartoon
+http://app.gogo-tv.com:2086/live/319957061G/27674/129844.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Onc Bollywood" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Onc Bollywood
+http://app.gogo-tv.com:2086/live/319957061G/27674/129843.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC horror" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC horror
+http://app.gogo-tv.com:2086/live/319957061G/27674/129842.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC Classic" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC Classic
+http://app.gogo-tv.com:2086/live/319957061G/27674/129841.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC Cinema" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC Cinema
+http://app.gogo-tv.com:2086/live/319957061G/27674/129840.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC Series" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC Series
+http://app.gogo-tv.com:2086/live/319957061G/27674/129839.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC MOvies" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC MOvies
+http://app.gogo-tv.com:2086/live/319957061G/27674/129838.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC drama" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC drama
+http://app.gogo-tv.com:2086/live/319957061G/27674/129837.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC comedy" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC comedy
+http://app.gogo-tv.com:2086/live/319957061G/27674/129836.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="ONC history" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",ONC history
+http://app.gogo-tv.com:2086/live/319957061G/27674/129835.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Alrabiaa Quran" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Alrabiaa Quran
+http://app.gogo-tv.com:2086/live/319957061G/27674/129834.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Alrbiaa Music" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Alrbiaa Music
+http://app.gogo-tv.com:2086/live/319957061G/27674/129833.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Alrabiaa Series" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Alrabiaa Series
+http://app.gogo-tv.com:2086/live/319957061G/27674/129832.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Alrabiaa variety" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Alrabiaa variety
+http://app.gogo-tv.com:2086/live/319957061G/27674/129831.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="alrabiaa Geo" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",alrabiaa Geo
+http://app.gogo-tv.com:2086/live/319957061G/27674/129830.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Alrabiaa MOvies" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Alrabiaa MOvies
+http://app.gogo-tv.com:2086/live/319957061G/27674/129829.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina box office" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina box office
+http://app.gogo-tv.com:2086/live/319957061G/27674/129828.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Kurdish" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Kurdish
+http://app.gogo-tv.com:2086/live/319957061G/27674/129827.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Drama" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Drama
+http://app.gogo-tv.com:2086/live/319957061G/27674/129826.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="masrahiyat" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",masrahiyat
+http://app.gogo-tv.com:2086/live/319957061G/27674/129825.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Kurdish songs" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Kurdish songs
+http://app.gogo-tv.com:2086/live/319957061G/27674/129824.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Movies" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Movies
+http://app.gogo-tv.com:2086/live/319957061G/27674/129823.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina TV WILD" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina TV WILD
+http://app.gogo-tv.com:2086/live/319957061G/27674/129822.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Nature Life" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Nature Life
+http://app.gogo-tv.com:2086/live/319957061G/27674/129821.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Kids" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Kids
+http://app.gogo-tv.com:2086/live/319957061G/27674/129820.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina-WWE" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina-WWE
+http://app.gogo-tv.com:2086/live/319957061G/27674/129819.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="zinatvanimation" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",zinatvanimation
+http://app.gogo-tv.com:2086/live/319957061G/27674/129818.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="zinatvkidsen" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",zinatvkidsen
+http://app.gogo-tv.com:2086/live/319957061G/27674/129817.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Hero" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Hero
+http://app.gogo-tv.com:2086/live/319957061G/27674/129816.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Russian" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Russian
+http://app.gogo-tv.com:2086/live/319957061G/27674/129815.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Music Relax" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Music Relax
+http://app.gogo-tv.com:2086/live/319957061G/27674/129814.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="zinatvwestern" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",zinatvwestern
+http://app.gogo-tv.com:2086/live/319957061G/27674/129813.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Turkish" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Turkish
+http://app.gogo-tv.com:2086/live/319957061G/27674/129812.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="zinatvpersian" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",zinatvpersian
+http://app.gogo-tv.com:2086/live/319957061G/27674/129811.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Documentary" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Documentary
+http://app.gogo-tv.com:2086/live/319957061G/27674/129810.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="zinatvshortfilm" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",zinatvshortfilm
+http://app.gogo-tv.com:2086/live/319957061G/27674/129809.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Cowboy" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Cowboy
+http://app.gogo-tv.com:2086/live/319957061G/27674/129808.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="zinafantasy" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",zinafantasy
+http://app.gogo-tv.com:2086/live/319957061G/27674/129807.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Top 10" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Top 10
+http://app.gogo-tv.com:2086/live/319957061G/27674/129806.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Asia" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Asia
+http://app.gogo-tv.com:2086/live/319957061G/27674/129805.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina action" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina action
+http://app.gogo-tv.com:2086/live/319957061G/27674/129804.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Avengrs" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Avengrs
+http://app.gogo-tv.com:2086/live/319957061G/27674/129803.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina TURKEY" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina TURKEY
+http://app.gogo-tv.com:2086/live/319957061G/27674/129802.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina ARABIC" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina ARABIC
+http://app.gogo-tv.com:2086/live/319957061G/27674/129801.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina horror" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina horror
+http://app.gogo-tv.com:2086/live/319957061G/27674/129800.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Historical" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Historical
+http://app.gogo-tv.com:2086/live/319957061G/27674/129799.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Family" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Family
+http://app.gogo-tv.com:2086/live/319957061G/27674/129798.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina comedy" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina comedy
+http://app.gogo-tv.com:2086/live/319957061G/27674/129797.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Gaming" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Gaming
+http://app.gogo-tv.com:2086/live/319957061G/27674/129796.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Zina Love" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Zina Love
+http://app.gogo-tv.com:2086/live/319957061G/27674/129795.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Sky Cinema Action" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Sky Cinema Action
+http://app.gogo-tv.com:2086/live/319957061G/27674/129794.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Sky Cinema BOLLYWOOD" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Sky Cinema BOLLYWOOD
+http://app.gogo-tv.com:2086/live/319957061G/27674/129793.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Sky Cinema Comedy" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Sky Cinema Comedy
+http://app.gogo-tv.com:2086/live/319957061G/27674/129792.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Sky cinema HITS" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Sky cinema HITS
+http://app.gogo-tv.com:2086/live/319957061G/27674/129791.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Sky Cinema PREMIUM" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Sky Cinema PREMIUM
+http://app.gogo-tv.com:2086/live/319957061G/27674/129790.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="Sky Sci Fi" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",Sky Sci Fi
+http://app.gogo-tv.com:2086/live/319957061G/27674/129789.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="SKy THRILLER" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",SKy THRILLER
+http://app.gogo-tv.com:2086/live/319957061G/27674/129788.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="NETFLIX French" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",NETFLIX French
+http://app.gogo-tv.com:2086/live/319957061G/27674/129787.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="NETFLIX Science" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",NETFLIX Science
+http://app.gogo-tv.com:2086/live/319957061G/27674/129786.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="NetFlix Classic" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",NetFlix Classic
+http://app.gogo-tv.com:2086/live/319957061G/27674/129785.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="NetFLix Crime" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",NetFLix Crime
+http://app.gogo-tv.com:2086/live/319957061G/27674/129784.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="NetFlix Thraller" tvg-logo="" group-title="Zina-Onc Arabe Entertainment",NetFlix Thraller
+http://app.gogo-tv.com:2086/live/319957061G/27674/129783.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="NetFlix Spanish" tvg-logo="" group-ti`;
+
+      function parseM3U(content) {
+        const lines = content.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        const out = [];
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          if (!line.startsWith("#EXTINF")) continue;
+
+          const nameMatch = line.match(/,(.+)$/);
+          const name = nameMatch ? nameMatch[1].trim() : "قناة بدون اسم";
+
+          const next = lines[i + 1] || "";
+          const url = /^https?:\/\//i.test(next) ? next : null;
+          if (url) i++;
+
+          if (url) {
+            out.push({
+              name,
+              url,
+              category: determineCategory(name)
+            });
+          }
+        }
+        return out;
+      }
+
+      function determineCategory(name) {
+        const n = name.toLowerCase();
+        if (n.includes("sport") || n.includes("رياضة") || n.includes("beinsport") || n.includes("eurosport") || n.includes("wwe")) return "sports";
+        if (n.includes("movie") || n.includes("cinema") || n.includes("aflam") || n.includes("film") || n.includes("دراما") || n.includes("drama") || n.includes("netflix") || n.includes("sky")) return "movies";
+        if (n.includes("news") || n.includes("أخبار") || n.includes("bbc") || n.includes("aljazeera") || n.includes("الجزيرة") || n.includes("العربية") || n.includes("hadath")) return "news";
+        if (n.includes("kids") || n.includes("child") || n.includes("أطفال") || n.includes("jeem") || n.includes("spacetoon") || n.includes("cartoon") || n.includes("animation")) return "kids";
+        return "general";
+      }
+
+      function getCategoryName(category) {
+        return ({
+          sports: "رياضة",
+          movies: "أفلام",
+          news: "أخبار",
+          kids: "أطفال",
+          general: "عامة"
+        })[category] || "عامة";
+      }
+
+      function setLoading(isLoading) {
+        loading.setAttribute("aria-hidden", String(!isLoading));
+      }
+
+      function renderChannels() {
+        channelsList.innerHTML = "";
+
+        if (!filteredChannels.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = "لم يتم العثور على قنوات مطابقة.";
+          channelsList.appendChild(empty);
+          return;
+        }
+
+        filteredChannels.forEach((channel) => {
+          const item = document.createElement("div");
+          item.className = "item";
+          item.tabIndex = 0;
+          item.setAttribute("role", "button");
+          item.setAttribute("aria-label", `تشغيل قناة ${channel.name}`);
+
+          item.innerHTML = `
+            <div>
+              <p class="name">${escapeHtml(channel.name)}</p>
+              <p class="url" title="${escapeHtml(channel.url)}">${escapeHtml(channel.url)}</p>
+            </div>
+            <span class="badge">${getCategoryName(channel.category)}</span>
+          `;
+
+          // تحسين التفاعل مع الأجهزة اللمسية وغير اللمسية
+          if (isTouch) {
+            item.addEventListener("touchstart", () => {
+              item.classList.add("item-touch");
+            }, { passive: true });
+            
+            item.addEventListener("touchend", () => {
+              item.classList.remove("item-touch");
+              playChannel(channel, item);
+            }, { passive: true });
+          } else {
+            item.addEventListener("click", () => playChannel(channel, item));
+          }
+          
+          item.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              playChannel(channel, item);
+            }
+          });
+
+          channelsList.appendChild(item);
+        });
+      }
+
+      function updateActiveItem(activeItem) {
+        document.querySelectorAll(".item").forEach(el => el.classList.remove("active"));
+        if (activeItem) {
+          activeItem.classList.add("active");
+          
+          // تحسين التمرير لعرض العنصر النشط
+          if ('scrollBehavior' in document.documentElement.style) {
+            activeItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          } else {
+            // توافق أفضل مع المتصفحات القديمة
+            try {
+              const parent = activeItem.parentElement;
+              const itemTop = activeItem.offsetTop;
+              const parentTop = parent.scrollTop;
+              const parentHeight = parent.clientHeight;
+              const itemHeight = activeItem.clientHeight;
+              
+              if (itemTop < parentTop || itemTop + itemHeight > parentTop + parentHeight) {
+                parent.scrollTop = itemTop - (parentHeight / 2) + (itemHeight / 2);
+              }
+            } catch(e) {}
+          }
+        }
+      }
+
+      function playChannel(channel, activeItem) {
+        currentChannel.textContent = channel.name;
+        currentUrl.textContent = channel.url;
+
+        // إظهار حالة التحميل
+        const prevStatus = currentChannel.textContent;
+        currentChannel.innerHTML = `<span style="opacity: 0.7">جاري تحميل:</span> ${escapeHtml(channel.name)}`;
+
+        // تحسين تحميل الفيديو
+        const oldSrc = videoPlayer.src;
+        if (oldSrc !== channel.url) {
+          videoPlayer.src = channel.url;
+          videoPlayer.load();
+        }
+
+        // تحديث واجهة المستخدم فوراً
+        playPauseBtn.innerHTML = `<i class="fa-solid fa-pause" aria-hidden="true"></i><span>إيقاف</span>`;
+        updateActiveItem(activeItem);
+
+        // تحسين التعامل مع الأخطاء والتشغيل التلقائي
+        const playPromise = videoPlayer.play();
+        
+        if (playPromise !== undefined) {
+          playPromise.catch((error) => {
+            console.log("تعذر التشغيل التلقائي:", error);
+            playPauseBtn.innerHTML = `<i class="fa-solid fa-play" aria-hidden="true"></i><span>تشغيل</span>`;
+            
+            // استعادة حالة العنوان بعد فشل التشغيل التلقائي
+            if (error.name === 'NotAllowedError') {
+              currentChannel.textContent = channel.name + " (انقر للتشغيل)";
+            } else {
+              currentChannel.textContent = prevStatus;
+            }
+          });
+        }
+      }
+
+      function applyFilters() {
+        const q = searchQuery.trim().toLowerCase();
+
+        filteredChannels = channels
+          .filter(ch => currentCategory === "all" ? true : ch.category === currentCategory)
+          .filter(ch => q ? ch.name.toLowerCase().includes(q) : true);
+
+        renderChannels();
+
+        // تحديث الفلاتر بشكل مناسب
+        filterButtons.forEach(btn => {
+          const isActive = btn.dataset.category === currentCategory;
+          btn.classList.toggle("active", isActive);
+          btn.setAttribute("aria-pressed", isActive.toString());
+        });
+      }
+
+      function initControls() {
+        // تحسين تجربة الأزرار للتفاعل
+        playPauseBtn.addEventListener("click", () => {
+          if (videoPlayer.paused) {
+            const playPromise = videoPlayer.play();
+            if (playPromise !== undefined) {
+              playPromise.then(() => {
+                playPauseBtn.innerHTML = `<i class="fa-solid fa-pause" aria-hidden="true"></i><span>إيقاف</span>`;
+              }).catch(() => {
+                // لا نفعل شيئًا لأن حالة زر التشغيل لم تتغير بعد
+              });
+            }
+          } else {
+            videoPlayer.pause();
+            playPauseBtn.innerHTML = `<i class="fa-solid fa-play" aria-hidden="true"></i><span>تشغيل</span>`;
+          }
+        });
+
+        // تحسين زر كتم الصوت
+        muteBtn.addEventListener("click", () => {
+          videoPlayer.muted = !videoPlayer.muted;
+          updateMuteButton();
+        });
+
+        // تحسين شريط التحكم بالصوت
+        volumeSlider.addEventListener("input", () => {
+          videoPlayer.volume = Number(volumeSlider.value);
+          if (videoPlayer.volume > 0 && videoPlayer.muted) {
+            videoPlayer.muted = false;
+            updateMuteButton();
+          }
+        });
+
+        function updateMuteButton() {
+          muteBtn.innerHTML = videoPlayer.muted
+            ? `<i class="fa-solid fa-volume-xmark" aria-hidden="true"></i><span>إلغاء الكتم</span>`
+            : `<i class="fa-solid fa-volume-high" aria-hidden="true"></i><span>كتم</span>`;
+        }
+
+        // تحسين وضع ملء الشاشة مع دعم أفضل للمتصفحات المختلفة
+        fullscreenBtn.addEventListener("click", () => {
+          const wrapper = document.querySelector(".video-wrapper");
+          
+          if (!document.fullscreenElement && 
+              !document.webkitFullscreenElement && 
+              !document.mozFullScreenElement &&
+              !document.msFullscreenElement) {
+            // طلب وضع ملء الشاشة
+            if (wrapper.requestFullscreen) {
+              wrapper.requestFullscreen();
+            } else if (wrapper.webkitRequestFullscreen) {
+              wrapper.webkitRequestFullscreen();
+            } else if (wrapper.mozRequestFullScreen) {
+              wrapper.mozRequestFullScreen();
+            } else if (wrapper.msRequestFullscreen) {
+              wrapper.msRequestFullscreen();
+            }
+          } else {
+            // إلغاء وضع ملء الشاشة
+            if (document.exitFullscreen) {
+              document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+              document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+              document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+              document.msExitFullscreen();
+            }
+          }
+        });
+
+        // الاستماع لتغيرات وضع ملء الشاشة
+        const fullscreenChangeEvents = ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'];
+        
+        fullscreenChangeEvents.forEach(eventName => {
+          document.addEventListener(eventName, () => {
+            const isFs = Boolean(
+              document.fullscreenElement || 
+              document.webkitFullscreenElement || 
+              document.mozFullScreenElement ||
+              document.msFullscreenElement
+            );
+            
+            fullscreenBtn.innerHTML = isFs
+              ? `<i class="fa-solid fa-compress" aria-hidden="true"></i><span>تصغير</span>`
+              : `<i class="fa-solid fa-expand" aria-hidden="true"></i><span>ملء الشاشة</span>`;
+          });
+        });
+
+        // اختصارات لوحة المفاتيح مع دعم أفضل
+        document.addEventListener("keydown", (e) => {
+          // عدم تداخل الاختصارات مع الكتابة
+          const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
+          const typing = tag === "input" || tag === "textarea" || tag === "select";
+          
+          if (typing) return;
+
+          // اختصارات التحكم بالفيديو
+          if (e.code === "Space" || e.key === " ") { 
+            e.preventDefault(); 
+            playPauseBtn.click(); 
+          }
+          if (e.code === "KeyM" || e.key === "m" || e.key === "م") { 
+            e.preventDefault(); 
+            muteBtn.click(); 
+          }
+          if (e.code === "KeyF" || e.key === "f" || e.key === "ق") { 
+            e.preventDefault(); 
+            fullscreenBtn.click(); 
+          }
+          
+          // تحكم بالصوت
+          if (e.code === "ArrowUp" || e.key === "ArrowUp") {
+            e.preventDefault();
+            videoPlayer.volume = Math.min(1, videoPlayer.volume + 0.1);
+            volumeSlider.value = videoPlayer.volume;
+          }
+          if (e.code === "ArrowDown" || e.key === "ArrowDown") {
+            e.preventDefault();
+            videoPlayer.volume = Math.max(0, videoPlayer.volume - 0.1);
+            volumeSlider.value = videoPlayer.volume;
+          }
+        });
+
+        // تحسين التعامل مع أخطاء الفيديو
+        videoPlayer.addEventListener("error", (e) => {
+          const errorMessages = {
+            1: "تم إلغاء العملية",
+            2: "حدث خطأ في الشبكة",
+            3: "خطأ في فك ترميز الفيديو",
+            4: "تنسيق الفيديو غير مدعوم"
+          };
+          
+          const errorCode = e.target.error ? e.target.error.code : 0;
+          const errorMessage = errorMessages[errorCode] || "تعذّر تشغيل القناة حالياً";
+          
+          currentChannel.textContent = errorMessage;
+          currentUrl.textContent = "";
+          
+          console.error("خطأ في تشغيل الفيديو:", errorCode, errorMessage);
+        });
+        
+        // الاستماع لتغيرات حالة الفيديو
+        videoPlayer.addEventListener("playing", () => {
+          playPauseBtn.innerHTML = `<i class="fa-solid fa-pause" aria-hidden="true"></i><span>إيقاف</span>`;
+        });
+        
+        videoPlayer.addEventListener("pause", () => {
+          playPauseBtn.innerHTML = `<i class="fa-solid fa-play" aria-hidden="true"></i><span>تشغيل</span>`;
+        });
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      // تحسين تخزين المعلومات والحالة إذا تم تحديث الصفحة
+      function saveState() {
+        try {
+          const state = {
+            category: currentCategory,
+            search: searchQuery,
+            currentUrl: videoPlayer.src || ""
+          };
+          localStorage.setItem('channelPlayerState', JSON.stringify(state));
+        } catch(e) {
+          console.error("فشل في حفظ الحالة:", e);
+        }
+      }
+
+      function loadState() {
+        try {
+          const savedState = localStorage.getItem('channelPlayerState');
+          if (savedState) {
+            const state = JSON.parse(savedState);
+            currentCategory = state.category || "all";
+            searchQuery = state.search || "";
+            searchInput.value = searchQuery;
+            
+            // تطبيق الفلاتر المحفوظة
+            applyFilters();
+            
+            // استعادة القناة السابقة بعد تحميل القنوات
+            if (state.currentUrl) {
+              const channel = channels.find(ch => ch.url === state.currentUrl);
+              if (channel) {
+                const item = document.querySelector(`.item[data-url="${escapeHtml(channel.url)}"]`);
+                if (item) {
+                  setTimeout(() => {
+                    playChannel(channel, item);
+                  }, 100);
+                }
+              }
+            }
+          }
+        } catch(e) {
+          console.error("فشل في استعادة الحالة:", e);
+        }
+      }
+
+      // تحسين الأداء العام للتطبيق
+      function init() {
+        // تفعيل شاشة التحميل
+        setLoading(true);
+        
+        // تحليل البيانات
+        setTimeout(() => {
+          try {
+            channels = parseM3U(m3uContent);
+            filteredChannels = [...channels];
+            
+            // عرض القنوات
+            renderChannels();
+            
+            // تهيئة أزرار التحكم
+            initControls();
+            
+            // محاولة تحميل الحالة السابقة
+            loadState();
+
+            // تشغيل أول قناة إذا لم تكن هناك حالة محفوظة
+            if (channels.length && !videoPlayer.src) {
+              const firstItem = channelsList.querySelector(".item");
+              playChannel(channels[0], firstItem);
+            }
+            
+            // الاستماع لأحداث البحث
+            searchInput.addEventListener("input", (e) => {
+              searchQuery = e.target.value;
+              applyFilters();
+              saveState();
+            });
+            
+            // الاستماع لأزرار التصفية
+            filterButtons.forEach(btn => {
+              btn.addEventListener("click", () => {
+                currentCategory = btn.dataset.category;
+                applyFilters();
+                saveState();
+              });
+            });
+            
+            // حفظ الحالة عند إغلاق التطبيق
+            window.addEventListener('beforeunload', saveState);
+            
+            // إنهاء التحميل
+            setLoading(false);
+            
+          } catch (error) {
+            console.error("خطأ أثناء تهيئة التطبيق:", error);
+            setLoading(false);
+            
+            // عرض رسالة خطأ للمستخدم
+            const errorElement = document.createElement('div');
+            errorElement.className = 'card';
+            errorElement.style.margin = '20px';
+            errorElement.style.padding = '20px';
+            errorElement.style.textAlign = 'center';
+            errorElement.style.color = 'var(--danger)';
+            errorElement.innerHTML = '<strong>حدث خطأ أثناء تحميل التطبيق</strong><p>يرجى تحديث الصفحة للمحاولة مرة أخرى.</p>';
+            
+            document.querySelector('.container').appendChild(errorElement);
+          }
+        }, 300); // تأخير بسيط للتأكد من تقديم تجربة سلسة
+      }
+
+      // بدء التطبيق
+      init();
+    });
+  </script>
+</body>
+</html>
