@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>M3U Pro Player - النسخة المطورة</title>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+
+  <style>
+    :root{
+      --primary:#2563eb;--primary-dark:#1d4ed8;--secondary:#10b981;--danger:#ef4444;
+      --dark:#0f172a;--dark-2:#1e293b;--dark-3:#334155;--dark-4:#475569;
+      --light:#f8fafc;--gray:#94a3b8;--gray-2:#cbd5f5;
+      --radius:12px;--radius-sm:8px;--shadow:0 18px 30px -15px rgba(15,23,42,.65);
+      --transition:all .22s cubic-bezier(.4,0,.2,1);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+      background:radial-gradient(circle at top,var(--dark-2),var(--dark));
+      color:var(--light);min-height:100vh;line-height:1.65;
+    }
+    a{color:inherit}
+    button{font-family:inherit}
+    svg{flex:none}
+    .app-container{
+      display:grid;grid-template-rows:auto 1fr auto;min-height:100vh;
+      max-width:1920px;margin:0 auto;
+    }
+    .app-header{
+      background:rgba(15,23,42,.92);backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(148,163,184,.25);
+      padding:1.2rem 1.5rem;position:sticky;top:0;z-index:1000;
+    }
+    .header-content{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+    .logo{display:flex;align-items:center;gap:.85rem;font-size:1.4rem;font-weight:800;
+      letter-spacing:.6px;text-transform:uppercase;
+    }
+    .logo span{
+      background:linear-gradient(135deg,var(--secondary) 0%,var(--primary) 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .logo svg{width:34px;height:34px;color:var(--secondary)}
+    .controls-bar{
+      display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;
+    }
+    .btn,.control-btn,.filter-btn{
+      padding:.55rem 1rem;border-radius:var(--radius-sm);
+      border:1px solid rgba(255,255,255,.09);
+      background:rgba(37,99,235,.12);color:var(--light);cursor:pointer;transition:var(--transition);
+      display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:.95rem;
+    }
+    .btn:hover,.control-btn:hover,.filter-btn:hover{background:rgba(37,99,235,.25);border-color:rgba(37,99,235,.55);transform:translateY(-1px)}
+    .btn-primary{background:var(--primary);border-color:rgba(37,99,235,.65)}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-danger{background:var(--danger);border-color:rgba(239,68,68,.6)}
+    .btn-danger:hover{filter:brightness(.97)}
+    .btn-ghost{background:rgba(30,41,59,.7)}
+    .select,.search-box{
+      padding:.55rem .7rem;border-radius:var(--radius-sm);
+      border:1px solid rgba(148,163,184,.25);
+      background:rgba(15,23,42,.75);color:var(--light);
+      min-width:200px;outline:none;font-size:.95rem;transition:var(--transition);
+    }
+    .select:focus,.search-box:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.25)}
+    .search-box{min-width:250px;width:100%}
+    .file-input{display:none}
+    .file-label{
+      display:inline-flex;align-items:center;gap:.55rem;cursor:pointer;
+      padding:.55rem 1rem;background:rgba(148,163,184,.08);
+      border:1px dashed rgba(148,163,184,.35);
+      border-radius:var(--radius-sm);transition:var(--transition);font-weight:600;
+      color:var(--gray-2);
+    }
+    .file-label:hover{background:rgba(37,99,235,.22);border-color:var(--primary);color:var(--light);transform:translateY(-1px)}
+    .filters-panel{
+      display:flex;gap:.65rem;flex-wrap:wrap;align-items:center;margin-top:.65rem;
+    }
+    .filters-panel select{min-width:170px}
+
+    .main-content{display:grid;grid-template-columns:1fr;gap:1.25rem;padding:1.5rem}
+    @media(min-width:1080px){.main-content{grid-template-columns:2fr 1fr}}
+    .player-section,.playlist-section{
+      background:rgba(15,23,42,.78);
+      border:1px solid rgba(148,163,184,.25);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);overflow:hidden;
+    }
+    .player-wrapper{position:relative;padding-top:56.25%;background:#000}
+    #player{position:absolute;inset:0;width:100%;height:100%;background:#000;border:none;outline:none;border-radius:inherit}
+    .player-overlay{
+      position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;
+      background:linear-gradient(0deg,rgba(15,23,42,.78),rgba(15,23,42,.12) 45%,transparent 75%);
+      padding:1.5rem;text-align:start;pointer-events:none;
+    }
+    .channel-title{font-size:1.2rem;font-weight:800;margin-bottom:.4rem}
+    .channel-stats{display:flex;gap:.8rem;font-size:.9rem;color:var(--gray);flex-wrap:wrap}
+    .player-controls{
+      display:flex;gap:.75rem;padding:1rem;background:rgba(15,23,42,.88);
+      border-top:1px solid rgba(148,163,184,.2);flex-wrap:wrap;
+    }
+    .control-btn{background:var(--primary);border-color:rgba(37,99,235,.4)}
+    .control-btn.alt{background:rgba(37,99,235,.18);border-color:rgba(37,99,235,.45)}
+    .control-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+
+    .playlist-section{display:flex;flex-direction:column}
+    .playlist-header{
+      padding:1.05rem;
+      display:flex;flex-direction:column;gap:.9rem;background:rgba(15,23,42,.9);
+      border-bottom:1px solid rgba(148,163,184,.25);
+    }
+    .header-row{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
+    .channels-count{font-size:.9rem;color:var(--gray);white-space:nowrap}
+    .stats-row{display:flex;gap:1.05rem;flex-wrap:wrap;color:var(--gray);font-size:.88rem}
+    .stats-row span strong{color:var(--light);font-weight:700}
+
+    .playlist-container{flex:1;overflow:auto;position:relative}
+    .playlist{display:grid;gap:.65rem;padding:1.05rem}
+    .channel-item{
+      display:grid;grid-template-columns:auto 1fr auto;gap:.85rem;align-items:center;
+      padding:.9rem;background:rgba(30,41,59,.65);
+      border:1px solid transparent;
+      border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition);
+    }
+    .channel-item:hover{background:rgba(37,99,235,.18);border-color:rgba(37,99,235,.35);transform:translateY(-1px)}
+    .channel-item.active{background:rgba(37,99,235,.24);border-color:rgba(37,99,235,.65);box-shadow:0 10px 30px -20px rgba(37,99,235,.6)}
+    .channel-item.favorite{border-color:rgba(16,185,129,.45)}
+    .channel-logo{
+      width:48px;height:48px;border-radius:var(--radius-sm);
+      overflow:hidden;background:rgba(15,23,42,.8);
+      display:flex;align-items:center;justify-content:center;
+      border:1px solid rgba(148,163,184,.2);
+      position:relative;
+    }
+    .channel-logo::after{
+      content:attr(data-source);position:absolute;bottom:-9px;right:4px;
+      font-size:.65rem;background:rgba(15,23,42,.85);
+      padding:.1rem .4rem;border-radius:999px;color:var(--gray);
+      border:1px solid rgba(148,163,184,.25);
+    }
+    .channel-logo img{width:100%;height:100%;object-fit:cover}
+    .channel-details{overflow:hidden;display:flex;flex-direction:column;gap:.25rem}
+    .channel-name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:1rem}
+    .channel-meta{display:flex;gap:.75rem;flex-wrap:wrap;font-size:.8rem;color:var(--gray)}
+    .favorite-flag{display:flex;align-items:center;gap:.35rem;color:var(--secondary)}
+    .favorite-flag svg{width:14px;height:14px}
+
+    .channel-actions{
+      display:flex;gap:.35rem;align-items:center;
+    }
+    .action-btn{
+      width:38px;height:38px;border-radius:50%;
+      background:rgba(37,99,235,.18);border:1px solid rgba(37,99,235,.35);
+      color:var(--light);cursor:pointer;transition:var(--transition);font-weight:600;
+      display:flex;align-items:center;justify-content:center;
+      position:relative;
+    }
+    .action-btn:hover{background:var(--primary);border-color:var(--primary)}
+    .action-btn.danger:hover{background:var(--danger);border-color:rgba(239,68,68,.75)}
+    .action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+    .tag{
+      display:inline-flex;align-items:center;gap:.35rem;
+      padding:.2rem .55rem;border-radius:999px;font-size:.78rem;
+      background:rgba(148,163,184,.12);color:var(--gray-2);
+    }
+    .empty-state{padding:2.75rem 1rem;text-align:center;color:var(--gray);font-size:1rem}
+
+    .status-bar{
+      padding:1rem 1.5rem;background:rgba(15,23,42,.92);
+      border-top:1px solid rgba(148,163,184,.25);
+      display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+      font-size:.92rem;
+    }
+    .status-info{display:flex;gap:1.25rem;flex-wrap:wrap;color:var(--gray)}
+    .loading{display:none;align-items:center;gap:.5rem;color:var(--primary)}
+    .loading.active{display:flex}
+    .spinner{width:16px;height:16px;border:2px solid rgba(37,99,235,.25);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .toast{
+      position:fixed;bottom:1.25rem;left:1.25rem;max-width:min(520px,calc(100vw - 2.5rem));
+      padding:1rem 1.1rem;background:rgba(15,23,42,.9);
+      border-radius:var(--radius);box-shadow:var(--shadow);
+      border-right:4px solid var(--primary);
+      transform:translateY(120%);transition:transform .25s ease,opacity .25s ease;z-index:10000;
+      display:flex;flex-direction:column;gap:.35rem;opacity:0;
+    }
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.error{border-right-color:var(--danger)}
+    .toast.success{border-right-color:var(--secondary)}
+    .toast .title{font-weight:700;font-size:1rem}
+    .toast .message{font-size:.9rem;color:var(--gray-2)}
+    .toast button{
+      align-self:flex-end;background:none;border:none;color:var(--primary);
+      font-weight:600;cursor:pointer;transition:color .2s;font-size:.85rem;padding:0;
+    }
+    .toast button:hover{color:var(--secondary)}
+
+    @media(max-width:900px){
+      .main-content{padding:1.1rem}
+      .player-controls{flex-direction:column}
+      .status-bar{justify-content:center;text-align:center}
+      .filters-panel{width:100%}
+      .filters-panel > *{flex:1}
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-content" role="banner">
+        <div class="logo" aria-label="M3U Pro Player">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-10 9H4V5h7v7zm2 0V5h7v7h-7zm-2 2v7H4v-7h7zm2 0h7v7h-7v-7z"/>
+          </svg>
+          <span>M3U Pro Player</span>
+        </div>
+
+        <div class="controls-bar" role="region" aria-label="خيارات التحميل">
+          <select id="serverSelect" class="select" aria-label="اختيار سيرفر">
+            <option value="">-- اختر سيرفر --</option>
+            <option value="https://iptv-org.github.io/iptv/languages/ara.m3u">قنوات عربية</option>
+            <option value="https://iptv-org.github.io/iptv/languages/spa.m3u">قنوات إسبانية</option>
+            <option value="https://iptv-org.github.io/iptv/languages/fra.m3u">قنوات فرنسية</option>
+            <option value="https://iptv-org.github.io/iptv/categories/sports.m3u">قنوات رياضية</option>
+          </select>
+
+          <input type="file" id="fileInput" class="file-input" multiple accept=".m3u,.m3u8,.m3u_plus" />
+          <label for="fileInput" class="file-label">📁 استيراد ملف M3U</label>
+
+          <button id="refreshBtn" class="btn btn-ghost" type="button" aria-label="تحديث القائمة">🔄 تحديث</button>
+          <button id="clearBtn" class="btn btn-danger" type="button" title="مسح القنوات والكاش">🧹 مسح الكل</button>
+        </div>
+
+        <div class="filters-panel" role="region" aria-label="مرشحات متقدمة">
+          <select id="groupFilter" class="select" aria-label="تصفية حسب المجموعة">
+            <option value="">جميع المجموعات</option>
+          </select>
+          <select id="sortSelect" class="select" aria-label="ترتيب القنوات">
+            <option value="alpha">الترتيب الأبجدي</option>
+            <option value="group">حسب المجموعة</option>
+            <option value="favorite">المفضلة أولاً</option>
+            <option value="source">حسب المصدر</option>
+          </select>
+          <button id="favoritesToggle" class="filter-btn" type="button" aria-pressed="false">⭐ عرض المفضلة فقط</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="player-section" aria-label="المشغل">
+        <div class="player-wrapper">
+          <video id="player" controls playsinline preload="metadata" aria-label="مشغل القناة">
+            متصفحك لا يدعم تشغيل الفيديو
+          </video>
+
+          <div class="player-overlay" aria-hidden="true">
+            <div class="tag" id="currentSourceTag">—</div>
+            <div>
+              <div class="channel-title" id="currentChannelTitle">اختر قناة للبدء</div>
+              <div class="channel-stats">
+                <span id="bufferStatus">جاهز</span>
+                <span id="qualityInfo">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="player-controls" role="group" aria-label="أدوات التحكم">
+          <button id="playToggleBtn" class="control-btn" type="button" disabled>▶ تشغيل</button>
+          <button id="stopBtn" class="control-btn alt" type="button" disabled>⏹ إيقاف</button>
+          <button id="muteBtn" class="control-btn alt" type="button" disabled>🔊 كتم</button>
+          <button id="fullscreenBtn" class="control-btn alt" type="button">⛶ ملء الشاشة</button>
+          <button id="prevBtn" class="control-btn alt" type="button" disabled>⬆ القناة السابقة</button>
+          <button id="nextBtn" class="control-btn alt" type="button" disabled>⬇ القناة التالية</button>
+        </div>
+      </section>
+
+      <section class="playlist-section" aria-label="قائمة القنوات">
+        <div class="playlist-header">
+          <div class="header-row">
+            <input id="searchInput" class="search-box" type="text" placeholder="🔍 ابحث عن قناة أو مجموعة..." autocomplete="off" aria-label="بحث" />
+            <div class="channels-count">العرض الحالي: <strong id="channelsCount">0</strong> من أصل <strong id="totalChannels">0</strong></div>
+          </div>
+          <div class="stats-row">
+            <span>المفضلة: <strong id="favoriteCount">0</strong></span>
+            <span>مصادر التحميل: <strong id="sourcesCount">0</strong></span>
+            <span>نتائج البحث: <strong id="searchMatches">0</strong></span>
+          </div>
+        </div>
+
+        <div class="playlist-container" role="list">
+          <div class="playlist" id="playlist">
+            <div class="empty-state">⚡ اختر سيرفراً أو استورد ملف M3U لتحميل القنوات</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="status-bar" aria-label="شريط الحالة">
+      <div class="status-info">
+        <span>الحالة: <strong id="statusText">جاهز</strong></span>
+        <span>الكاش: <strong id="cacheSize">0KB</strong></span>
+        <span>آخر تحديث: <strong id="lastLoaded">—</strong></span>
+      </div>
+
+      <div class="loading" id="loadingIndicator" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <span>جاري التحميل...</span>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="assertive">
+    <div class="title" id="toastTitle"></div>
+    <div class="message" id="toastMessage"></div>
+    <button type="button" id="toastClose">تم</button>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const STORAGE_KEYS = {
+        CACHE: 'm3u_cache_v3',
+        FAVORITES: 'm3u_favorites_v1',
+        SETTINGS: 'm3u_settings_v1'
+      };
+
+      class M3UPlayer {
+        constructor() {
+          this.channels = [];
+          this.filteredChannels = [];
+          this.groupSet = new Set();
+          this.sourceSet = new Set();
+          this.currentChannel = null;
+          this.favorites = new Set();
+          this.settings = {
+            sort: 'alpha',
+            favoritesOnly: false,
+            lastSource: ''
+          };
+
+          this.cache = new Map();
+          this.cacheTTLms = 1000 * 60 * 60 * 24 * 2; // يومين
+
+          this.hls = null;
+          this.toastTimer = null;
+
+          this.init();
+        }
+
+        init() {
+          this.bindElements();
+          this.loadPersistedData();
+          this.bindEvents();
+          this.pruneCache();
+          this.updateCacheSize();
+          this.updateStats();
+          this.updateControls();
+          this.refreshGroupFilter();
+        }
+
+        bindElements() {
+          this.el = {
+            player: document.getElementById('player'),
+            playlist: document.getElementById('playlist'),
+            playlistContainer: document.querySelector('.playlist-container'),
+            serverSelect: document.getElementById('serverSelect'),
+            fileInput: document.getElementById('fileInput'),
+            searchInput: document.getElementById('searchInput'),
+            playToggleBtn: document.getElementById('playToggleBtn'),
+            stopBtn: document.getElementById('stopBtn'),
+            muteBtn: document.getElementById('muteBtn'),
+            fullscreenBtn: document.getElementById('fullscreenBtn'),
+            prevBtn: document.getElementById('prevBtn'),
+            nextBtn: document.getElementById('nextBtn'),
+            refreshBtn: document.getElementById('refreshBtn'),
+            clearBtn: document.getElementById('clearBtn'),
+            loadingIndicator: document.getElementById('loadingIndicator'),
+            toast: document.getElementById('toast'),
+            toastTitle: document.getElementById('toastTitle'),
+            toastMessage: document.getElementById('toastMessage'),
+            toastClose: document.getElementById('toastClose'),
+            statusText: document.getElementById('statusText'),
+            channelsCount: document.getElementById('channelsCount'),
+            totalChannels: document.getElementById('totalChannels'),
+            favoriteCount: document.getElementById('favoriteCount'),
+            sourcesCount: document.getElementById('sourcesCount'),
+            searchMatches: document.getElementById('searchMatches'),
+            currentChannelTitle: document.getElementById('currentChannelTitle'),
+            bufferStatus: document.getElementById('bufferStatus'),
+            qualityInfo: document.getElementById('qualityInfo'),
+            cacheSize: document.getElementById('cacheSize'),
+            currentSourceTag: document.getElementById('currentSourceTag'),
+            groupFilter: document.getElementById('groupFilter'),
+            sortSelect: document.getElementById('sortSelect'),
+            favoritesToggle: document.getElementById('favoritesToggle'),
+            lastLoaded: document.getElementById('lastLoaded')
+          };
+
+          this.debouncedFilter = this.debounce((query) => this.applyFilters({ query }), 180);
+        }
+
+        bindEvents() {
+          this.el.serverSelect.addEventListener('change', () => {
+            const url = this.el.serverSelect.value;
+            if (url) {
+              this.settings.lastSource = url;
+              this.saveSettings();
+              this.loadFromUrl(url);
+            }
+          });
+
+          this.el.fileInput.addEventListener('change', (e) => {
+            if (e.target.files?.length) this.loadFromFiles(e.target.files);
+            e.target.value = '';
+          });
+
+          this.el.searchInput.addEventListener('input', (e) => this.debouncedFilter(e.target.value));
+
+          this.el.playToggleBtn.addEventListener('click', () => this.togglePlay());
+          this.el.stopBtn.addEventListener('click', () => this.stop());
+          this.el.muteBtn.addEventListener('click', () => this.toggleMute());
+          this.el.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+          this.el.prevBtn.addEventListener('click', () => this.prevChannel());
+          this.el.nextBtn.addEventListener('click', () => this.nextChannel());
+          this.el.refreshBtn.addEventListener('click', () => this.refresh());
+          this.el.clearBtn.addEventListener('click', () => this.clearAll());
+
+          this.el.groupFilter.addEventListener('change', () => this.applyFilters());
+          this.el.sortSelect.addEventListener('change', () => {
+            this.settings.sort = this.el.sortSelect.value;
+            this.saveSettings();
+            this.applyFilters();
+          });
+
+          this.el.favoritesToggle.addEventListener('click', () => {
+            const newState = !this.settings.favoritesOnly;
+            this.settings.favoritesOnly = newState;
+            this.el.favoritesToggle.setAttribute('aria-pressed', String(newState));
+            this.el.favoritesToggle.textContent = newState ? '⭐ عرض جميع القنوات' : '⭐ عرض المفضلة فقط';
+            this.saveSettings();
+            this.applyFilters();
+          });
+
+          this.el.player.addEventListener('play', () => this.onPlay());
+          this.el.player.addEventListener('pause', () => this.onPause());
+          this.el.player.addEventListener('waiting', () => this.onBuffering());
+          this.el.player.addEventListener('canplay', () => this.onCanPlay());
+          this.el.player.addEventListener('error', (e) => this.onError(e));
+          this.el.player.addEventListener('ended', () => this.onEnded());
+
+          this.el.toastClose.addEventListener('click', () => this.hideToast());
+
+          this.el.playlistContainer.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+              const direction = e.key === 'ArrowUp' ? -1 : 1;
+              this.navigateList(direction);
+              e.preventDefault();
+            }
+          });
+
+          document.addEventListener('keydown', (e) => {
+            if (e.target === this.el.searchInput) return;
+            if (e.key === ' ') { e.preventDefault(); this.togglePlay(); }
+            if (e.key === 'ArrowUp') { e.preventDefault(); this.prevChannel(); }
+            if (e.key === 'ArrowDown') { e.preventDefault(); this.nextChannel(); }
+            if (e.key.toLowerCase() === 'f') this.toggleFullscreen();
+            if (e.key.toLowerCase() === 'm') this.toggleMute();
+            if (e.key === 'Escape' && document.fullscreenElement) document.exitFullscreen?.();
+          });
+        }
+
+        loadPersistedData() {
+          this.loadCacheFromStorage();
+          this.loadFavorites();
+          this.loadSettings();
+        }
+
+        // ---------- Load / Parse ----------
+        async loadFromUrl(url) {
+          try {
+            this.showLoading(true);
+            this.setStatus('جاري تحميل القنوات...');
+            this.showToast('جاري تحميل القائمة من السيرفر المختار...', 'info', 'تحميل القنوات');
+
+            const cached = this.cache.get(url);
+            if (cached && (Date.now() - cached.timestamp) < this.cacheTTLms) {
+              const added = this.parseM3U(cached.data, url);
+              this.showToast(`تم التحميل من الكاش: أضيفت ${added} قناة`, 'success', 'تحميل ناجح');
+              this.el.lastLoaded.textContent = new Date(cached.timestamp).toLocaleString();
+              return;
+            }
+
+            const response = await fetch(url, { cache: 'no-store' });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            const text = await response.text();
+            const added = this.parseM3U(text, url);
+            this.cachePlaylist(url, text);
+
+            this.showToast(`تم تحميل ${added} قناة جديدة`, 'success', 'اكتملت العملية');
+            this.el.lastLoaded.textContent = new Date().toLocaleString();
+          } catch (err) {
+            console.error(err);
+            this.showToast(`خطأ في التحميل: ${err?.message || 'غير معروف'}`, 'error', 'فشل التحميل');
+            this.setStatus('تعذر التحميل');
+          } finally {
+            this.showLoading(false);
+          }
+        }
+
+        async loadFromFiles(files) {
+          this.showLoading(true);
+          this.setStatus('جاري استيراد الملفات...');
+          let totalAdded = 0;
+          let failures = 0;
+
+          try {
+            for (const file of files) {
+              try {
+                const text = await this.readFile(file);
+                totalAdded += this.parseM3U(text, file.name);
+                this.el.lastLoaded.textContent = new Date().toLocaleString();
+              } catch (e) {
+                failures++;
+                this.showToast(`خطأ في قراءة ${file.name}`, 'error', 'تعذر القراءة');
+              }
+            }
+            const summary = `تم استيراد ${totalAdded} قناة${failures ? ` (${failures} ملف فشل)` : ''}`;
+            this.showToast(summary, failures ? 'info' : 'success', 'نتيجة الاستيراد');
+            this.setStatus('جاهز');
+          } finally {
+            this.showLoading(false);
+          }
+        }
+
+        readFile(file) {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(String(e.target.result || ''));
+            reader.onerror = reject;
+            reader.readAsText(file);
+          });
+        }
+
+        parseM3U(text, source = 'server') {
+          const lines = String(text || '').split(/\r?\n/);
+          const newChannels = [];
+          let current = null;
+
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+
+            if (line.startsWith('#EXTINF:')) {
+              const info = this.parseExtinf(line);
+              current = {
+                id: this.generateId(info.name, source, line),
+                name: info.name || 'قناة غير معروفة',
+                url: '',
+                logo: info.logo || '',
+                group: info.group || 'عام',
+                tvgId: info.tvgId || '',
+                source
+              };
+            } else if (!line.startsWith('#') && current) {
+              current.url = line;
+              if (!this.isDuplicate(current)) {
+                newChannels.push(current);
+                this.sourceSet.add(source);
+                if (current.group) this.groupSet.add(current.group);
+              }
+              current = null;
+            }
+          }
+
+          if (newChannels.length) {
+            this.channels = this.mergeById(this.channels, newChannels);
+            this.applyFilters();
+            this.updateStats();
+            this.refreshGroupFilter();
+            this.updateControls();
+          }
+
+          return newChannels.length;
+        }
+
+        parseExtinf(line) {
+          const out = { name: '', logo: '', group: 'عام', tvgId: '' };
+          const nameMatch = line.match(/,(.+)$/);
+          if (nameMatch) out.name = nameMatch[1].trim();
+
+          const logoMatch = line.match(/tvg-logo="([^"]+)"/i);
+          if (logoMatch) out.logo = logoMatch[1];
+
+          const groupMatch = line.match(/group-title="([^"]+)"/i);
+          if (groupMatch) out.group = groupMatch[1];
+
+          const tvgMatch = line.match(/tvg-id="([^"]+)"/i);
+          if (tvgMatch) out.tvgId = tvgMatch[1];
+
+          return out;
+        }
+
+        generateId(name, source, seed) {
+          const hash = btoa(unescape(encodeURIComponent(`${name}-${source}-${seed}`))).slice(0, 12);
+          return `ch-${hash}-${Date.now().toString(36)}`;
+        }
+
+        isDuplicate(channel) {
+          return this.channels.some(c => c.name === channel.name && c.url === channel.url);
+        }
+
+        mergeById(existing, incoming) {
+          const map = new Map(existing.map(ch => [ch.id, ch]));
+          for (const ch of incoming) map.set(ch.id, ch);
+          return Array.from(map.values());
+        }
+
+        // ---------- Filtering & Sorting ----------
+        applyFilters({ query } = {}) {
+          const search = query !== undefined ? String(query || '') : this.el.searchInput.value;
+          const group = this.el.groupFilter.value;
+          const favoritesOnly = this.settings.favoritesOnly;
+          const sort = this.settings.sort;
+
+          const q = search.trim().toLowerCase();
+          let result = this.channels.slice();
+
+          if (favoritesOnly) result = result.filter(ch => this.favorites.has(ch.id));
+          if (group) result = result.filter(ch => ch.group === group);
+          if (q) {
+            result = result.filter(c =>
+              c.name.toLowerCase().includes(q) ||
+              c.group.toLowerCase().includes(q) ||
+              c.source.toLowerCase().includes(q)
+            );
+          }
+
+          switch (sort) {
+            case 'group':
+              result.sort((a, b) => a.group.localeCompare(b.group, 'ar') || a.name.localeCompare(b.name, 'ar'));
+              break;
+            case 'favorite':
+              result.sort((a, b) => {
+                const favDiff = Number(this.favorites.has(b.id)) - Number(this.favorites.has(a.id));
+                return favDiff || a.name.localeCompare(b.name, 'ar');
+              });
+              break;
+            case 'source':
+              result.sort((a, b) => a.source.localeCompare(b.source, 'ar') || a.name.localeCompare(b.name, 'ar'));
+              break;
+            default:
+              result.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+          }
+
+          this.filteredChannels = result;
+          this.renderPlaylist();
+          this.updateStats({ searchMatches: q ? result.length : null });
+        }
+
+        refreshGroupFilter() {
+          const currentValue = this.el.groupFilter.value;
+          const groups = Array.from(this.groupSet).sort((a, b) => a.localeCompare(b, 'ar'));
+          this.el.groupFilter.innerHTML = '<option value="">جميع المجموعات</option>' +
+            groups.map(g => `<option value="${g}">${g}</option>`).join('');
+
+          if (groups.includes(currentValue)) {
+            this.el.groupFilter.value = currentValue;
+          }
+        }
+
+        // ---------- Render ----------
+        renderPlaylist() {
+          const root = this.el.playlist;
+          root.textContent = '';
+
+          if (!this.filteredChannels.length) {
+            const empty = document.createElement('div');
+            empty.className = 'empty-state';
+            empty.textContent = this.channels.length
+              ? '🚫 لا توجد نتائج مطابقة للبحث/الترشيح الحالي'
+              : '⚡ اختر سيرفراً أو استورد ملف M3U لتحميل القنوات';
+            root.appendChild(empty);
+            return;
+          }
+
+          const frag = document.createDocumentFragment();
+
+          for (const ch of this.filteredChannels) {
+            const item = document.createElement('div');
+            item.className = 'channel-item';
+            if (this.currentChannel?.id === ch.id) item.classList.add('active');
+            if (this.favorites.has(ch.id)) item.classList.add('favorite');
+            item.dataset.id = ch.id;
+            item.tabIndex = 0;
+            item.setAttribute('role', 'listitem');
+            item.setAttribute('aria-label', `قناة ${ch.name}`);
+
+            const logoWrap = document.createElement('div');
+            logoWrap.className = 'channel-logo';
+            logoWrap.dataset.source = ch.source.length > 16 ? ch.source.slice(0, 16) + '…' : ch.source;
+
+            if (ch.logo) {
+              const img = document.createElement('img');
+              img.alt = ch.name;
+              img.loading = 'lazy';
+              img.referrerPolicy = 'no-referrer';
+              img.src = ch.logo;
+              img.addEventListener('error', () => {
+                img.remove();
+                logoWrap.appendChild(this.defaultLogoSvg());
+              }, { once: true });
+              logoWrap.appendChild(img);
+            } else {
+              logoWrap.appendChild(this.defaultLogoSvg());
+            }
+
+            const details = document.createElement('div');
+            details.className = 'channel-details';
+
+            const name = document.createElement('div');
+            name.className = 'channel-name';
+            name.title = ch.name;
+            name.textContent = ch.name;
+
+            const meta = document.createElement('div');
+            meta.className = 'channel-meta';
+            const groupTag = document.createElement('div');
+            groupTag.className = 'tag';
+            groupTag.textContent = ch.group;
+
+            meta.appendChild(groupTag);
+
+            if (this.favorites.has(ch.id)) {
+              const favFlag = document.createElement('div');
+              favFlag.className = 'favorite-flag';
+              favFlag.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>مفضل';
+              meta.appendChild(favFlag);
+            }
+
+            details.appendChild(name);
+            details.appendChild(meta);
+
+            const actions = document.createElement('div');
+            actions.className = 'channel-actions';
+
+            const playBtn = this.createActionButton('▶', 'تشغيل القناة', () => this.playChannel(ch.id));
+            const favBtn = this.createActionButton('⭐', 'تبديل المفضلة', () => this.toggleFavorite(ch.id));
+            favBtn.classList.toggle('active', this.favorites.has(ch.id));
+            favBtn.title = this.favorites.has(ch.id) ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة';
+
+            const copyBtn = this.createActionButton('🔗', 'نسخ رابط القناة', () => this.copyLink(ch.url, ch.name));
+            const removeBtn = this.createActionButton('🗑', 'حذف القناة من القائمة الحالية', () => this.removeChannel(ch.id));
+            removeBtn.classList.add('danger');
+
+            actions.appendChild(playBtn);
+            actions.appendChild(favBtn);
+            actions.appendChild(copyBtn);
+            actions.appendChild(removeBtn);
+
+            item.appendChild(logoWrap);
+            item.appendChild(details);
+            item.appendChild(actions);
+
+            item.addEventListener('click', (e) => {
+              if (e.target.closest('.channel-actions')) return;
+              this.playChannel(ch.id);
+            });
+
+            item.addEventListener('keyup', (e) => {
+              if (e.key === 'Enter') this.playChannel(ch.id);
+              if (e.key === 'Delete') this.removeChannel(ch.id);
+            });
+
+            frag.appendChild(item);
+          }
+
+          root.appendChild(frag);
+        }
+
+        defaultLogoSvg() {
+          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svg.setAttribute('viewBox', '0 0 24 24');
+          svg.setAttribute('fill', 'currentColor');
+          svg.setAttribute('aria-hidden', 'true');
+          svg.style.width = '22px';
+          svg.style.height = '22px';
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', 'M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-10 9H4V5h7v7zm2 0V5h7v7h-7zm-2 2v7H4v-7h7zm2 0h7v7h-7v-7z');
+          svg.appendChild(path);
+          return svg;
+        }
+
+        createActionButton(text, title, handler) {
+          const btn = document.createElement('button');
+          btn.className = 'action-btn';
+          btn.type = 'button';
+          btn.title = title;
+          btn.textContent = text;
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handler();
+          });
+          return btn;
+        }
+
+        // ---------- Favorites ----------
+        toggleFavorite(channelId) {
+          if (this.favorites.has(channelId)) {
+            this.favorites.delete(channelId);
+            this.showToast('تمت إزالة القناة من المفضلة', 'info', 'مفضلة');
+          } else {
+            this.favorites.add(channelId);
+            this.showToast('تمت إضافة القناة إلى المفضلة', 'success', 'مفضلة');
+          }
+          this.saveFavorites();
+          this.applyFilters();
+        }
+
+        loadFavorites() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEYS.FAVORITES);
+            if (!raw) return;
+            const favs = JSON.parse(raw);
+            if (Array.isArray(favs)) this.favorites = new Set(favs);
+          } catch (e) {
+            console.warn('Favorites load error', e);
+            this.favorites = new Set();
+          }
+        }
+
+        saveFavorites() {
+          try {
+            localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(Array.from(this.favorites)));
+          } catch (e) {
+            console.warn('Favorites save error', e);
+          }
+        }
+
+        loadSettings() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+            if (!raw) return;
+            const settings = JSON.parse(raw);
+            Object.assign(this.settings, settings);
+          } catch (e) {
+            console.warn('Settings load error', e);
+          }
+          this.el.sortSelect.value = this.settings.sort;
+          this.el.favoritesToggle.setAttribute('aria-pressed', String(this.settings.favoritesOnly));
+          this.el.favoritesToggle.textContent = this.settings.favoritesOnly ? '⭐ عرض جميع القنوات' : '⭐ عرض المفضلة فقط';
+          if (this.settings.lastSource) this.el.serverSelect.value = this.settings.lastSource;
+        }
+
+        saveSettings() {
+          try {
+            localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(this.settings));
+          } catch (e) {
+            console.warn('Settings save error', e);
+          }
+        }
+
+        // ---------- Playback ----------
+        async playChannel(channelId) {
+          const ch = this.channels.find(c => c.id === channelId);
+          if (!ch) return;
+
+          this.currentChannel = ch;
+          this.el.currentChannelTitle.textContent = ch.name;
+          this.el.currentSourceTag.textContent = ch.source;
+          this.setStatus('جاري التشغيل...');
+          this.el.bufferStatus.textContent = 'جاري التحضير...';
+          this.el.qualityInfo.textContent = '—';
+
+          this.renderPlaylist();
+          this.updateControls();
+
+          try {
+            await this.attachSource(ch.url);
+            await this.el.player.play();
+            this.showToast(`جاري تشغيل: ${ch.name}`, 'info', 'بدأ التشغيل');
+          } catch (err) {
+            console.error(err);
+            this.showToast(`تعذر التشغيل: ${err?.message || 'غير معروف'}`, 'error', 'فشل التشغيل');
+            this.setStatus('تعذر التشغيل');
+          }
+        }
+
+        async attachSource(url) {
+          this.destroyHls();
+          const isM3U8 = /\.m3u8(\?|$)/i.test(url);
+
+          if (isM3U8 && window.Hls && window.Hls.isSupported()) {
+            this.hls = new window.Hls({
+              enableWorker: true,
+              lowLatencyMode: true,
+              backBufferLength: 30,
+            });
+
+            this.hls.attachMedia(this.el.player);
+            this.hls.on(window.Hls.Events.MEDIA_ATTACHED, () => {
+              this.hls.loadSource(url);
+            });
+
+            this.hls.on(window.Hls.Events.MANIFEST_PARSED, (_evt, data) => {
+              const levels = data?.levels?.length || 0;
+              this.el.qualityInfo.textContent = levels ? `جودات متاحة: ${levels}` : 'HLS متعدد';
+            });
+
+            this.hls.on(window.Hls.Events.LEVEL_SWITCHED, (_evt, data) => {
+              const lvl = this.hls?.levels?.[data.level];
+              if (lvl?.height) this.el.qualityInfo.textContent = `دقة ${lvl.height}p`;
+            });
+
+            this.hls.on(window.Hls.Events.ERROR, (_evt, data) => {
+              if (!data?.fatal) return;
+              if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
+                this.hls.startLoad();
+              } else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) {
+                this.hls.recoverMediaError();
+              } else {
+                this.destroyHls();
+              }
+            });
+
+            return;
+          }
+
+          if (isM3U8 && this.el.player.canPlayType('application/vnd.apple.mpegurl')) {
+            this.el.player.src = url;
+            this.el.player.load();
+            this.el.qualityInfo.textContent = 'HLS (دعم المتصفح)';
+            return;
+          }
+
+          this.el.player.src = url;
+          this.el.player.load();
+          this.el.qualityInfo.textContent = isM3U8 ? 'HLS (غير مدعوم بالكامل)' : '—';
+        }
+
+        destroyHls() {
+          try { this.hls?.destroy?.(); } catch {}
+          this.hls = null;
+        }
+
+        play() { return this.el.player.play(); }
+        pause() { this.el.player.pause(); }
+
+        togglePlay() {
+          if (!this.currentChannel) return;
+          if (this.el.player.paused) {
+            this.play().catch(err => this.showToast(`تعذر التشغيل: ${err?.message || 'غير معروف'}`, 'error', 'فشل التشغيل'));
+          } else {
+            this.pause();
+          }
+        }
+
+        stop() {
+          this.destroyHls();
+          this.el.player.pause();
+          this.el.player.removeAttribute('src');
+          this.el.player.load();
+
+          this.currentChannel = null;
+          this.el.currentChannelTitle.textContent = 'اختر قناة للبدء';
+          this.el.currentSourceTag.textContent = '—';
+          this.el.bufferStatus.textContent = 'جاهز';
+          this.el.qualityInfo.textContent = '—';
+          this.setStatus('متوقف');
+
+          this.renderPlaylist();
+          this.updateControls();
+        }
+
+        toggleMute() {
+          if (!this.currentChannel) return;
+          this.el.player.muted = !this.el.player.muted;
+          this.el.muteBtn.textContent = this.el.player.muted ? '🔇 إلغاء الكتم' : '🔊 كتم';
+        }
+
+        toggleFullscreen() {
+          const v = this.el.player;
+          if (!document.fullscreenElement) {
+            v.requestFullscreen?.() || v.webkitRequestFullscreen?.() || v.msRequestFullscreen?.();
+          } else {
+            document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();
+          }
+        }
+
+        prevChannel() {
+          if (!this.currentChannel || this.filteredChannels.length < 2) return;
+          const idx = this.filteredChannels.findIndex(c => c.id === this.currentChannel.id);
+          const prev = (idx - 1 + this.filteredChannels.length) % this.filteredChannels.length;
+          this.playChannel(this.filteredChannels[prev].id);
+        }
+
+        nextChannel() {
+          if (!this.currentChannel || this.filteredChannels.length < 2) return;
+          const idx = this.filteredChannels.findIndex(c => c.id === this.currentChannel.id);
+          const next = (idx + 1) % this.filteredChannels.length;
+          this.playChannel(this.filteredChannels[next].id);
+        }
+
+        navigateList(direction) {
+          if (!this.filteredChannels.length) return;
+          const active = document.querySelector('.channel-item.active');
+          const items = Array.from(document.querySelectorAll('.channel-item'));
+          let index = active ? items.indexOf(active) : -1;
+          index = (index + direction + items.length) % items.length;
+          items[index].focus();
+          items[index].scrollIntoView({ block: 'nearest' });
+        }
+
+        refresh() {
+          const url = this.el.serverSelect.value || this.settings.lastSource;
+          if (!url) {
+            this.showToast('اختر سيرفراً أولاً', 'error', 'لا يوجد سيرفر');
+            return;
+          }
+          this.cache.delete(url);
+          this.saveCacheToStorage();
+          this.updateCacheSize();
+          this.loadFromUrl(url);
+        }
+
+        // ---------- Player events ----------
+        onPlay() {
+          this.el.playToggleBtn.textContent = '⏸ إيقاف مؤقت';
+          this.setStatus('جاري التشغيل');
+          this.el.bufferStatus.textContent = 'تشغيل';
+          this.updateControls();
+        }
+
+        onPause() {
+          this.el.playToggleBtn.textContent = '▶ تشغيل';
+          if (this.currentChannel) this.setStatus('متوقف مؤقتاً');
+          this.updateControls();
+        }
+
+        onBuffering() {
+          if (!this.currentChannel) return;
+          this.setStatus('جاري التحميل...');
+          this.el.bufferStatus.textContent = 'تحميل...';
+        }
+
+        onCanPlay() {
+          if (!this.currentChannel) return;
+          this.setStatus('جاهز');
+          this.el.bufferStatus.textContent = 'جاهز';
+        }
+
+        onEnded() { this.nextChannel(); }
+
+        onError(event) {
+          if (!this.currentChannel) return;
+          const error = event?.target?.error;
+          const message = error?.message || 'قد يكون الرابط غير مدعوم أو محجوب (CORS)';
+          this.showToast(message, 'error', 'خطأ في التشغيل');
+          this.setStatus('خطأ تشغيل');
+          this.el.bufferStatus.textContent = 'خطأ';
+        }
+
+        // ---------- Channel operations ----------
+        removeChannel(channelId) {
+          const before = this.channels.length;
+          this.channels = this.channels.filter(ch => ch.id !== channelId);
+          this.filteredChannels = this.filteredChannels.filter(ch => ch.id !== channelId);
+          this.favorites.delete(channelId);
+
+          if (this.currentChannel?.id === channelId) this.stop();
+
+          const removed = before !== this.channels.length;
+          if (removed) this.showToast('تم حذف القناة من الجلسة الحالية', 'info', 'حذف قناة');
+          this.updateStats();
+          this.renderPlaylist();
+          this.saveFavorites();
+        }
+
+        copyLink(url, name) {
+          if (!navigator?.clipboard) {
+            this.showToast('المتصفح لا يدعم النسخ التلقائي', 'error', 'خطأ النسخ');
+            return;
+          }
+          navigator.clipboard.writeText(url)
+            .then(() => this.showToast(`تم نسخ رابط ${name}`, 'success', 'نسخ الرابط'))
+            .catch(() => this.showToast('تعذر نسخ الرابط، جرّب يدوياً', 'error', 'خطأ النسخ'));
+        }
+
+        // ---------- Cache ----------
+        cachePlaylist(key, data) {
+          this.cache.set(key, { data, timestamp: Date.now() });
+          this.saveCacheToStorage();
+          this.updateCacheSize();
+        }
+
+        loadCacheFromStorage() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEYS.CACHE);
+            if (!raw) return;
+            const entries = JSON.parse(raw);
+            this.cache = new Map(Array.isArray(entries) ? entries : []);
+          } catch (e) {
+            console.warn('Cache load error', e);
+            this.cache = new Map();
+          }
+        }
+
+        saveCacheToStorage() {
+          try {
+            localStorage.setItem(STORAGE_KEYS.CACHE, JSON.stringify(Array.from(this.cache.entries())));
+          } catch (e) {
+            this.pruneCache(true);
+            try {
+              localStorage.setItem(STORAGE_KEYS.CACHE, JSON.stringify(Array.from(this.cache.entries())));
+            } catch {}
+          }
+        }
+
+        pruneCache(aggressive = false) {
+          const now = Date.now();
+          for (const [k, v] of this.cache.entries()) {
+            if (!v?.timestamp || (now - v.timestamp) > this.cacheTTLms) this.cache.delete(k);
+          }
+          if (!aggressive) return;
+
+          const items = Array.from(this.cache.entries()).sort((a,b) => (b[1].timestamp||0) - (a[1].timestamp||0));
+          this.cache = new Map(items.slice(0, 3));
+        }
+
+        updateCacheSize() {
+          const size = new Blob([JSON.stringify(Array.from(this.cache.entries()))]).size;
+          this.el.cacheSize.textContent = `${(size / 1024).toFixed(2)}KB`;
+          this.el.sourcesCount.textContent = this.sourceSet.size;
+        }
+
+        // ---------- UI helpers ----------
+        showLoading(show) {
+          this.el.loadingIndicator.classList.toggle('active', !!show);
+        }
+
+        setStatus(text) {
+          this.el.statusText.textContent = text;
+        }
+
+        showToast(message, type = 'info', title = '') {
+          const toast = this.el.toast;
+          this.el.toastTitle.textContent = title || (type === 'error' ? 'خطأ' : type === 'success' ? 'نجاح' : 'إشعار');
+          this.el.toastMessage.textContent = String(message || '');
+          toast.className = `toast show ${type}`;
+
+          clearTimeout(this.toastTimer);
+          this.toastTimer = setTimeout(() => this.hideToast(), 4000);
+        }
+
+        hideToast() {
+          const toast = this.el.toast;
+          toast.classList.remove('show');
+        }
+
+        updateStats({ searchMatches } = {}) {
+          this.el.channelsCount.textContent = String(this.filteredChannels.length);
+          this.el.totalChannels.textContent = String(this.channels.length);
+          this.el.favoriteCount.textContent = String(this.favorites.size);
+          if (searchMatches !== undefined) {
+            this.el.searchMatches.textContent = searchMatches === null ? '—' : String(searchMatches);
+          }
+        }
+
+        updateControls() {
+          const hasChannel = !!this.currentChannel;
+          const hasList = this.filteredChannels.length > 0;
+
+          this.el.playToggleBtn.disabled = !hasChannel;
+          this.el.stopBtn.disabled = !hasChannel;
+          this.el.muteBtn.disabled = !hasChannel;
+          this.el.prevBtn.disabled = !hasList;
+          this.el.nextBtn.disabled = !hasList;
+
+          if (!hasChannel) {
+            this.el.muteBtn.textContent = '🔊 كتم';
+            this.el.playToggleBtn.textContent = '▶ تشغيل';
+          } else {
+            this.el.muteBtn.textContent = this.el.player.muted ? '🔇 إلغاء الكتم' : '🔊 كتم';
+            this.el.playToggleBtn.textContent = this.el.player.paused ? '▶ تشغيل' : '⏸ إيقاف مؤقت';
+          }
+        }
+
+        clearAll() {
+          this.stop();
+          this.channels = [];
+          this.filteredChannels = [];
+          this.sourceSet.clear();
+          this.groupSet.clear();
+          this.cache.clear();
+          this.favorites.clear();
+
+          try {
+            localStorage.removeItem(STORAGE_KEYS.CACHE);
+            localStorage.removeItem(STORAGE_KEYS.FAVORITES);
+          } catch {}
+
+          this.el.serverSelect.value = '';
+          this.el.searchInput.value = '';
+          this.el.groupFilter.innerHTML = '<option value="">جميع المجموعات</option>';
+          this.applyFilters();
+          this.updateStats();
+          this.updateCacheSize();
+          this.el.lastLoaded.textContent = '—';
+          this.setStatus('جاهز');
+          this.showToast('تمت إعادة التعيين بنجاح', 'success', 'تم المسح');
+        }
+
+        debounce(fn, wait = 200) {
+          let t = null;
+          return (...args) => {
+            clearTimeout(t);
+            t = setTimeout(() => fn.apply(this, args), wait);
+          };
+        }
+      }
+
+      window.player = new M3UPlayer();
+    })();
+  </script>
+</body>
+</html>
