@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>لايف تي في | بث مباشر لجميع قنوات العالم مجاناً</title>
+    <meta name="description" content="شاهد البث المباشر لأكثر من 5000 قناة تلفزيونية من جميع أنحاء العالم. قنوات عربية، هندية، وأوروبية بجودة عالية مجاناً عبر الإنترنت.">
+    <meta name="keywords" content="بث مباشر, تلفزيون اونلاين, IPTV مجاني, قنوات عربية مباشر, مشاهدة قنوات عالمية, LARACHE Live TV Online, Free IPTV">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://yourdomain.com/">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <style>
+        /* المتغيرات للوضعين الليلي والنهاري */
+        :root {
+            /* وضع فيسبوك (النهاري) */
+            --bg: #f0f2f5;
+            --surface: #ffffff;
+            --header-bg: #ffffff;
+            --text-main: #1c1e21;
+            --text-sub: #65676b;
+            --accent: #1877f2; /* لون فيسبوك الأزرق */
+            --card-hover: #e4e6eb;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --surface: #18191a;
+            --header-bg: #242526;
+            --text-main: #e4e6eb;
+            --text-sub: #b0b3b8;
+            --accent: #2d88ff;
+            --card-hover: #3a3b3c;
+            --shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            margin: 0;
+            transition: all 0.3s ease;
+        }
+
+        /* --- Header --- */
+        header {
+            background: var(--header-bg);
+            padding: 10px 5%;
+            display: block;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-size: 22px; font-weight: bold; color: var(--accent); }
+
+        .controls { display: flex; align-items: center; gap: 15px; }
+
+        .theme-toggle {
+            cursor: pointer; font-size: 1.2rem; color: var(--text-sub);
+            background: var(--card-hover); padding: 8px 12px; border-radius: 50%;
+        }
+
+        /* --- Dropdown المحسن مع بحث --- */
+        .dropdown { position: rtl; }
+        .dropbtn {
+            background: var(--accent); color: white; padding: 8px 16px;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: 600;
+        }
+        .dropdown-content {
+            display: none; position: absolute; background: var(--surface);
+            min-width: 250px; max-height: 450px; overflow: hidden;
+            box-shadow: var(--shadow); z-index: 10; right: 0; border-radius: 8px;
+            padding: 10px;
+        }
+        .dropdown:hover .dropdown-content { display: block; }
+        
+        #countrySearch {
+            width: 100%; padding: 8px; margin-bottom: 10px;
+            border: 1px solid var(--card-hover); border-radius: 4px;
+            background: var(--bg); color: var(--text-main);
+        }
+        .country-list { max-height: 350px; overflow-y: auto; }
+        .country-list a {
+            color: var(--text-main); padding: 10px; text-decoration: none;
+            display: block; border-radius: 4px; font-size: 14px;
+        }
+        .country-list a:hover { background: var(--card-hover); }
+
+        /* --- Main Content --- */
+        main { padding: 20px 5%; }
+
+        .player-container {
+            max-width: 1000px; margin: 0 auto 30px;
+            background: #000; border-radius: 12px; overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        video { width: 100%; aspect-ratio: 16/9; }
+
+        /* --- Channel Grid المحسن --- */
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+        .channel-card {
+            background: var(--surface);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: var(--shadow);
+            border: 1px solid transparent;
+        }
+        .channel-card:hover { 
+            transform: scale(1.03); 
+            border-color: var(--accent);
+        }
+        .channel-card img { 
+            width: 70px; height: 70px; object-fit: contain; 
+            margin-bottom: 10px; border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .channel-card p { font-size: 14px; font-weight: 600; margin: 0; }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--surface); padding: 40px 5%;
+            margin-top: 50px; border-top: 1px solid var(--card-hover);
+        }
+        .footer-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;
+        }
+        .footer-grid h3 { color: var(--accent); margin-bottom: 15px; }
+        .footer-grid p, .footer-grid a { color: var(--text-sub); text-decoration: none; font-size: 14px; }
+
+        @media (max-width: 600px) {
+            .channel-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <header>
+        <div class="logo"><i class="fas fa-play-circle"></i> LARACHE TV</div>
+        
+        <div class="controls">
+            <div class="dropdown">
+                <button class="dropbtn"><i class="fas fa-globe"></i> الدول</button>
+                <div class="dropdown-content">
+                    <input type="text" id="countrySearch" placeholder="ابحث عن دولة..." oninput="searchCountries()">
+                    <div class="country-list" id="countryList">
+                        </div>
+                </div>
+            </div>
+            
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <i id="themeIcon" class="fas fa-moon"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="player-container">
+            <video id="videoPlayer" controls autoplay poster="https://via.placeholder.com/1000x560?text=Live+Stream"></video>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 id="categoryTitle" style="font-size: 1.2rem;">اختر دولة للبدء</h2>
+            <div style="background: var(--surface); padding: 5px 15px; border-radius: 20px; box-shadow: var(--shadow);">
+                <input type="text" id="channelSearch" placeholder="بحث في القنوات..." oninput="filterChannels()" 
+                style="border:none; background:transparent; color:var(--text-main); outline:none;">
+            </div>
+        </div>
+
+        <div class="channel-grid" id="channelGrid">
+            </div>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <h3>عن لايف تي في</h3>
+                <p>أكبر دليل للقنوات التلفزيونية المفتوحة. نوفر لك روابط البث الرسمي بجودة عالية لضمان أفضل تجربة مشاهدة.</p>
+            </div>
+            <div>
+                <h3>روابط هامة</h3>
+                <a href="#">سياسة الخصوصية</a><br><br>
+                <a href="#">شروط الاستخدام</a><br><br>
+                <a href="#">اتصل بنا</a>
+            </div>
+            <div>
+                <h3>تابعنا</h3>
+                <div style="display: flex; gap: 15px; font-size: 20px;">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 40px; color: var(--text-sub); font-size: 12px;">
+            &copy; 2025   عماد الدين لمراني  - جميع الحقوق محفوظة.
+        </p>
+    </footer>
+
+    <script>
+        const m3uUrl = 'https://iptv-org.github.io/iptv/index.country.m3u';
+        let countriesData = {};
+        let activeCountry = "";
+
+        // 1. نظام الثيمات (Theme System)
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            if (body.getAttribute('data-theme') === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-sun';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                icon.className = 'fas fa-moon';
+            }
+        }
+
+        // 2. جلب البيانات
+        async function fetchChannels() {
+            try {
+                const res = await fetch(m3uUrl);
+                const data = await res.text();
+                parseM3U(data);
+                renderCountries();
+            } catch (err) { console.error("Error:", err); }
+        }
+
+        function parseM3U(text) {
+            const lines = text.split('\n');
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].startsWith('#EXTINF:')) {
+                    const group = lines[i].match(/group-title="([^"]+)"/)?.[1] || "Global";
+                    const logo = lines[i].match(/tvg-logo="([^"]+)"/)?.[1] || "";
+                    const name = lines[i].split(',')[1]?.trim() || "Channel";
+                    const url = lines[i+1]?.trim();
+                    if (url && url.startsWith('http')) {
+                        if (!countriesData[group]) countriesData[group] = [];
+                        countriesData[group].push({ name, logo, url });
+                    }
+                }
+            }
+        }
+
+        // 3. البحث في الدول
+        function renderCountries() {
+            const list = document.getElementById('countryList');
+            list.innerHTML = Object.keys(countriesData).sort().map(country => `
+                <a href="#" onclick="selectCountry(event, '${country}')">${country}</a>
+            `).join('');
+        }
+
+        function searchCountries() {
+            const term = document.getElementById('countrySearch').value.toLowerCase();
+            const links = document.querySelectorAll('#countryList a');
+            links.forEach(link => {
+                link.style.display = link.textContent.toLowerCase().includes(term) ? 'block' : 'none';
+            });
+        }
+
+        function selectCountry(e, country) {
+            e.preventDefault();
+            activeCountry = country;
+            document.getElementById('categoryTitle').textContent = "قنوات " + country;
+            renderChannels(countriesData[country]);
+        }
+
+        // 4. تحسين عرض القنوات والبحث
+        function renderChannels(channels) {
+            const grid = document.getElementById('channelGrid');
+            grid.innerHTML = channels.map(ch => `
+                <div class="channel-card" onclick="play('${ch.url}')">
+                    <img src="${ch.logo}" onerror="this.src='https://via.placeholder.com/70?text=TV'">
+                    <p>${ch.name}</p>
+                </div>
+            `).join('');
+        }
+
+        function filterChannels() {
+            const term = document.getElementById('channelSearch').value.toLowerCase();
+            if(!activeCountry) return;
+            const filtered = countriesData[activeCountry].filter(c => c.name.toLowerCase().includes(term));
+            renderChannels(filtered);
+        }
+
+        function play(url) {
+            const video = document.getElementById('videoPlayer');
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+            } else {
+                video.src = url;
+                video.play();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        fetchChannels();
+    </script>
+</body>
+</html>
