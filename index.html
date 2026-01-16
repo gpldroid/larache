@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="مدونة العرائش التقنية تقدم أحدث المقالات في تحسين محركات البحث، ووردبريس، بلوجر والتقنيات الحديثة">
+    <meta name="keywords" content="SEO, ووردبريس, بلوجر, تقنية, مدونة">
+    <meta name="author" content="مدونة العرائش التقنية">
+    <title>مدونة العرائش التقنية | أحدث المقالات التقنية</title>
+    <link rel="canonical" href="https://greatxenforo.blogspot.com/">
+    <!-- تحسين الخطوط مع خط احتياطي -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 12px;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            
+            /* متغيرات السمة */
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --card-bg: #ffffff;
+            --menu-bg: #ffffff;
+            --footer-bg: #212529;
+            --footer-text: #ffffff;
+            --footer-link: #ddd;
+            --border-color: #e9ecef;
+            --success: #4cc9f0;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #e9ecef;
+            --card-bg: #1e1e1e;
+            --menu-bg: #1a1a1a;
+            --footer-bg: #000000;
+            --footer-text: #f8f9fa;
+            --footer-link: #cccccc;
+            --border-color: #333333;
+            --light-gray: #2d2d2d;
+            --gray: #adb5bd;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', system-ui, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* رابط تخطي المحتوى */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            z-index: 1002;
+            text-decoration: none;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            transition: top 0.2s;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* شريط تقدم القراءة */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* الهيدر المحسّن */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size:  1.5rem;
+        }
+
+        .logo-img-placeholder {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(45deg, #ff9a00, #f72585);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* البحث الذكي مع اقتراحات */
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            margin: 0 1.5rem;
+            max-width: 550px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 3rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 4px 16px rgba(67, 97, 238, 0.3);
+        }
+
+        .search-button {
+            position: absolute;
+            right: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--shadow);
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+        }
+        .search-suggestions.active {
+            display: block;
+        }
+        .suggestion-item {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .suggestion-item:hover, .suggestion-item.highlighted {
+            background-color: var(--light-gray);
+        }
+        .suggestion-item .title {
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+        }
+        .suggestion-item .category {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle, .ai-assistant-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover, .ai-assistant-toggle:hover {
+            background-color: rgba(255,255,255,0.15);
+            transform: scale(1.05);
+        }
+
+        /* القائمة */
+        nav.menu {
+            background-color: var(--menu-bg);
+            position: sticky;
+            top: 78px;
+            z-index: 999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .menu-list {
+            display: flex;
+            list-style: none;
+            gap: 0.25rem;
+            padding: 0.75rem 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .menu-list::-webkit-scrollbar { display: none; }
+
+        .menu-link {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+        .menu-link:hover, .menu-link.active {
+            background-color: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+            border-color: rgba(var(--primary-rgb), 0.3);
+        }
+
+        /* المحتوى الرئيسي */
+        main {
+            padding: 2rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.08), rgba(247, 37, 133, 0.04));
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(67, 97, 238, 0.1);
+        }
+        [data-theme="dark"] .hero {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.15), rgba(67, 97, 238, 0.05));
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--gray);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* نظام عرض المقالات المحسّن */
+        .content-tabs {
+            display: flex;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid var(--border-color);
+            gap: 0.5rem;
+        }
+        .content-tab {
+            padding: 1rem 1.8rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--gray);
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+            position: relative;
+        }
+        .content-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--accent);
+        }
+        .content-tab:hover {
+            color: var(--primary-dark);
+            background-color: var(--light-gray);
+        }
+        .content-tab .badge {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* أقسام المحتوى */
+        .content-section {
+            display: none;
+            animation: fadeInUp 0.5s ease;
+        }
+        .content-section.active-section { display: block; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* تصميم جديد لعرض المقالات */
+        .posts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 3rem;
+        }
+        .post-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .post-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        .post-thumbnail {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background-color: var(--light-gray);
+        }
+        .post-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .post-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+        .post-title a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .post-title a:hover {
+            color: var(--primary);
+        }
+        .post-excerpt {
+            color: var(--gray);
+            margin-bottom: 1.2rem;
+            flex-grow: 1;
+            line-height: 1.6;
+        }
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: auto;
+        }
+        .post-category {
+            background-color: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+
+        /* هيكل شريط التبويب الجديد */
+        .modern-tab-container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+        }
+        .modern-tab-header {
+            display: flex;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .modern-tab-header::-webkit-scrollbar { display: none; }
+        .modern-tab-btn {
+            padding: 1.2rem 1.8rem;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.85);
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+        .modern-tab-btn:hover {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .modern-tab-btn.active {
+            color: white;
+            border-bottom-color: var(--accent);
+            background-color: rgba(0,0,0,0.2);
+        }
+        .modern-tab-content {
+            padding: 2rem;
+            min-height: 400px;
+        }
+        .modern-tab-panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .modern-tab-panel.active { display: block; }
+
+        /* خريطة الموقع المحسنة */
+        .sitemap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        .sitemap-category {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+        .sitemap-category h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.7rem;
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary-dark);
+        }
+        .sitemap-links {
+            list-style: none;
+        }
+        .sitemap-links li {
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .sitemap-links li:last-child {
+            border-bottom: none;
+        }
+        .sitemap-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+            padding: 0.2rem 0;
+        }
+        .sitemap-links a:hover {
+            color: var(--primary);
+            padding-right: 8px;
+        }
+        .sitemap-links a::before {
+            content: '›';
+            margin-left: 0.5rem;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+        .sitemap-links a:hover::before {
+            color: var(--primary);
+            margin-left: 0.8rem;
+        }
+
+        /* تأثيرات التحميل (Skeleton Loaders) */
+        .skeleton {
+            background: linear-gradient(90deg, var(--light-gray) 25%, rgba(255,255,255,0.5) 50%, var(--light-gray) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton-card {
+            height: 350px;
+            border-radius: var(--border-radius);
+        }
+        .skeleton-text {
+            height: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .skeleton-text.short { width: 60%; }
+        .loading-text {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+        .loading-text i {
+            margin-left: 0.5rem;
+            color: var(--primary);
+        }
+
+        /* مساعد الذكاء الاصطناعي العائم */
+        .ai-assistant-widget {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 9998;
+        }
+        .ai-chat-container {
+            width: 380px;
+            max-width: 90vw;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            max-height: 600px;
+            animation: slideInUp 0.3s ease;
+        }
+        .ai-chat-container.active {
+            display: flex;
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ai-chat-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ai-chat-header h4 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        .ai-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .ai-chat-body {
+            flex-grow: 1;
+            padding: 1.2rem;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+        .ai-message {
+            margin-bottom: 1rem;
+            padding: 0.9rem;
+            border-radius: var(--border-radius);
+            max-width: 85%;
+        }
+        .ai-message.bot {
+            background-color: rgba(67, 97, 238, 0.1);
+            border: 1px solid rgba(67, 97, 238, 0.2);
+            align-self: flex-start;
+        }
+        .ai-message.user {
+            background-color: rgba(247, 37, 133, 0.1);
+            border: 1px solid rgba(247, 37, 133, 0.2);
+            align-self: flex-end;
+            margin-right: 0;
+            margin-left: auto;
+        }
+        .ai-typing {
+            display: inline-flex;
+            align-items: center;
+            color: var(--gray);
+            font-style: italic;
+        }
+        .ai-typing span {
+            animation: blink 1.4s infinite;
+            margin: 0 1px;
+        }
+        .ai-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blink {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        .ai-chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 0.5rem;
+        }
+        .ai-chat-input {
+            flex-grow: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .ai-chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .ai-send-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .ai-send-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* قسم توليد البيانات الوصفية بالذكاء الاصطناعي (للمدون) */
+        .ai-tools-section {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            margin-top: 3rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--accent);
+        }
+        .ai-tools-section h3 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .ai-tools-section h3 i {
+            color: var(--accent);
+        }
+        .ai-generator-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-group input, .form-group textarea {
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        .ai-generate-btn {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            padding: 1rem 1.8rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .ai-generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(67, 97, 238, 0.3);
+        }
+        .ai-result {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: rgba(76, 201, 240, 0.1);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(76, 201, 240, 0.3);
+            display: none;
+        }
+        .ai-result.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        .ai-result h4 {
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .ai-result-content {
+            line-height: 1.7;
+        }
+        .ai-result-content .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .ai-result-content .tag {
+            background-color: rgba(67, 97, 238, 0.15);
+            color: var(--primary);
+            padding: 0.4rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        /* الفوتر المحسّن */
+        footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+        }
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+        }
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 0.9rem;
+        }
+        .footer-links a {
+            color: var(--footer-link);
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+        .footer-links a:hover {
+            color: var(--footer-text);
+            padding-right: 8px;
+        }
+        .footer-links a::before {
+            content: '←';
+            margin-left: 0.5rem;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+        .footer-links a:hover::before {
+            opacity: 1;
+            margin-left: 0.8rem;
+        }
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: var(--transition);
+        }
+        .social-link:hover {
+            background-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        .newsletter-form {
+            margin-top: 1.5rem;
+        }
+        .newsletter-input {
+            width: 100%;
+            padding: 0.9rem;
+            border: none;
+            border-radius: var(--border-radius);
+            margin-bottom: 0.8rem;
+            font-family: inherit;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .newsletter-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        .newsletter-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.9rem 1.8rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            width: 100%;
+        }
+        .newsletter-button:hover {
+            background-color: var(--primary-dark);
+        }
+        .copyright {
+            text-align: center;
+            padding-top: 2.5rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--footer-link);
+            font-size: 0.9rem;
+            grid-column: 1 / -1;
+        }
+
+        /* زر العودة للأعلى */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 999;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .back-to-top:hover {
+            transform: translateY(-7px) scale(1.05);
+        }
+
+        /* تحسينات للشاشات الصغيرة */
+        @media (max-width: 1024px) {
+            .container { padding: 0 1.2rem; }
+            .hero h1 { font-size: 2.3rem; }
+            .posts-container { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+        }
+        @media (max-width: 768px) {
+            .header-container { flex-direction: column; text-align: center; gap: 1rem; }
+            .logo { justify-content: center; margin-bottom: 0.5rem; }
+            .search-wrapper { width: 100%; max-width: 100%; margin: 1rem 0; }
+            .header-actions { position: absolute; top: 1rem; left: 1rem; }
+            nav.menu { top: auto; }
+            .menu-list { padding: 0.6rem 0; }
+            .hero { padding: 2rem 1rem; }
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1.1rem; }
+            .content-tabs { overflow-x: auto; padding-bottom: 0.5rem; }
+            .content-tab { padding: 0.8rem 1.2rem; font-size: 0.95rem; }
+            .modern-tab-header { padding: 0.5rem; }
+            .modern-tab-btn { padding: 1rem 1.2rem; font-size: 0.95rem; }
+            .ai-chat-container { width: 320px; }
+            .ai-assistant-widget { bottom: 1rem; left: 1rem; }
+            .back-to-top { bottom: 1rem; left: 1rem; width: 46px; height: 46px; }
+        }
+        @media (max-width: 480px) {
+            .posts-container { grid-template-columns: 1fr; }
+            .sitemap-grid { grid-template-columns: 1fr; }
+            .footer-container { grid-template-columns: 1fr; }
+            .ai-chat-container { width: calc(100vw - 2rem); left: 1rem; right: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- قفز إلى المحتوى -->
+    <a href="#main-content" class="skip-link">انتقل إلى المحتوى</a>
+
+    <!-- شريط التقدم -->
+    <div class="reading-progress" id="reading-progress"></div>
+
+    <!-- الهيدر المحسّن -->
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <!-- شعار بديل في حال عدم تحميل الصورة -->
+                <div class="logo-img-placeholder">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <span>العرائش التقنية</span>
+            </a>
+            
+            <!-- البحث الذكي مع الاقتراحات -->
+            <div class="search-wrapper">
+                <div class="search-container">
+                    <input type="text" class="search-input" id="smart-search-input" placeholder="ابحث في المقالات...">
+                    <button class="search-button" id="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div class="search-suggestions" id="search-suggestions">
+                        <!-- الاقتراحات ستظهر هنا عبر الجافاسكريبت -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <!-- زر مساعد الذكاء الاصطناعي -->
+
+                <!-- زر تبديل الوضع الليلي -->
+                <button id="theme-toggle" class="theme-toggle" aria-label="تبديل الوضع الليلي">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- القائمة -->
+    <nav class="menu">
+        <div class="container">
+            <ul class="menu-list">
+                <li><a href="/" class="menu-link active"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="/search/label/SEO" class="menu-link"><i class="fas fa-chart-line"></i> SEO</a></li>
+                <li><a href="/search/label/WordPress" class="menu-link"><i class="fab fa-wordpress"></i> ووردبريس</a></li>
+                <li><a href="/search/label/Blogger" class="menu-link"><i class="fab fa-blogger"></i> بلوجر</a></li>
+                <li><a href="/search/label/Tutorials" class="menu-link"><i class="fas fa-graduation-cap"></i> شروحات</a></li>
+                <li><a href="/search/label/News" class="menu-link"><i class="far fa-newspaper"></i> أخبار</a></li>
+                <li><a href="/p/about.html" class="menu-link"><i class="fas fa-info-circle"></i> من نحن</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main id="main-content" class="container">
+        <!-- قسم البطل -->
+        <section class="hero">
+            <h1>مرحباً بكم في مدونة العرائش التقنية</h1>
+            <p>نقدم لكم أحدث المقالات والشروحات في مجال تحسين محركات البحث (SEO)، إدارة مواقع ووردبريس وبلوجر، وأحدث التقنيات البرمجية، مدعومة بأدوات ذكاء اصطناعي لتحسين تجربتك.</p>
+        </section>
+
+        <!-- نظام عرض المقالات -->
+        <div class="content-tabs">
+            <div class="content-tab active" data-target="recent-posts">
+                <i class="far fa-newspaper"></i> أحدث المقالات
+                <span class="badge" id="recent-count-badge">جديد</span>
+            </div>
+            <div class="content-tab" data-target="categories">
+                <i class="fas fa-folder-open"></i> الأقسام
+            </div>
+            <div class="content-tab" data-target="sitemap">
+                <i class="fas fa-sitemap"></i> خريطة الموقع
+            </div>
+            <div class="content-tab" data-target="ai-tools">
+                <i class="fas fa-magic"></i> أدوات الذكاء الاصطناعي
+            </div>
+        </div>
+
+        <!-- قسم المقالات الحديثة -->
+        <section id="recent-posts" class="content-section active-section">
+            <div class="modern-tab-container">
+                <div class="modern-tab-header" id="recent-tab-header">
+                    <!-- سيتم إنشاء أزرار التبويب ديناميكياً بناءً على التصنيفات -->
+                </div>
+                <div class="modern-tab-content" id="recent-tab-content">
+                    <!-- تأثيرات التحميل -->
+                    <div class="loading-text" id="recent-loading">
+                        <i class="fas fa-circle-notch fa-spin"></i> جاري تحميل أحدث المقالات...
+                    </div>
+                    <div class="posts-container" id="recent-posts-container" style="display: none;">
+                        <!-- المقالات ستحمل هنا -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم الأقسام -->
+        <section id="categories" class="content-section">
+            <div class="modern-tab-container">
+                <div class="modern-tab-content">
+                    <div class="loading-text" id="categories-loading">
+                        <i class="fas fa-circle-notch fa-spin"></i> جاري تحميل الأقسام...
+                    </div>
+                    <div class="sitemap-grid" id="categories-container" style="display: none;">
+                        <!-- الأقسام ستحمل هنا -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم خريطة الموقع -->
+        <section id="sitemap" class="content-section">
+            <div class="modern-tab-container">
+                <div class="modern-tab-content">
+                    <div class="loading-text" id="sitemap-loading">
+                        <i class="fas fa-circle-notch fa-spin"></i> جاري تحميل خريطة الموقع... (يتم التحميل عند فتح هذا القسم لتوفير السرعة)
+                    </div>
+                    <div id="sitemap-container" style="display: none;">
+                        <!-- خريطة الموقع ستحمل هنا -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم أدوات الذكاء الاصطناعي للمدون -->
+        <section id="ai-tools" class="content-section">
+            <div class="ai-tools-section">
+                <h3><i class="fas fa-wand-magic-sparkles"></i> أدوات الذكاء الاصطناعي للمدون</h3>
+                <p>استخدم هذه الأدوات لتوليف وصف تعريفي (Meta Description) ووسوم (Tags) ذكية لمقالاتك باستخدام الذكاء الاصطناعي، مما يحسن ظهورها في محركات البحث.</p>
+                
+                <form class="ai-generator-form" id="ai-generator-form">
+                    <div class="form-group">
+                        <label for="post-title"><i class="far fa-edit"></i> عنوان المقالة</label>
+                        <input type="text" id="post-title" placeholder="أدخل عنوان المقالة هنا..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="post-content"><i class="far fa-file-alt"></i> محتوى المقالة (أو ملخص)</label>
+                        <textarea id="post-content" rows="5" placeholder="الصق محتوى المقالة أو اكتب ملخصاً عنها هنا..." required></textarea>
+                    </div>
+                    <button type="submit" class="ai-generate-btn" id="ai-generate-btn">
+                        <i class="fas fa-robot"></i> توليد بالذكاء الاصطناعي
+                    </button>
+                </form>
+                
+                <div class="ai-result" id="ai-result">
+                    <h4><i class="far fa-lightbulb"></i> النتائج المُولدة</h4>
+                    <div class="ai-result-content">
+                        <p><strong>الوصف التعريفي (Meta Description):</strong></p>
+                        <p id="generated-description">سيظهر الوصف هنا...</p>
+                        <p><strong>الكلمات المفتاحية المقترحة:</strong></p>
+                        <div class="tags" id="generated-tags">
+                            <!-- الوسوم ستظهر هنا -->
+                        </div>
+                        <p class="hint"><small><i class="fas fa-info-circle"></i> يمكنك نسخ هذه النتائج واستخدامها مباشرة في مقالتك.</small></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- الفوتر المحسّن -->
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-column">
+                <h3>عن المدونة</h3>
+                <p>مدونة العرائش التقنية تقدم محتوى عربي مميز في مجال التقنية، تحسين محركات البحث، وبرمجة الويب، مدعومة بأحدث تقنيات الذكاء الاصطناعي.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="فيسبوك"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link" aria-label="تويتر"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link" aria-label="يوتيوب"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="social-link" aria-label="تلغرام"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h3>روابط سريعة</h3>
+                <ul class="footer-links">
+                    <li><a href="/"><i class="fas fa-chevron-left"></i> الرئيسية</a></li>
+                    <li><a href="/p/about.html"><i class="fas fa-chevron-left"></i> من نحن</a></li>
+                    <li><a href="/p/contact.html"><i class="fas fa-chevron-left"></i> اتصل بنا</a></li>
+                    <li><a href="/p/privacy-policy.html"><i class="fas fa-chevron-left"></i> سياسة الخصوصية</a></li>
+                    <li><a href="#" id="open-sitemap-footer"><i class="fas fa-chevron-left"></i> خريطة الموقع</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>التصنيفات الشائعة</h3>
+                <ul class="footer-links">
+                    <li><a href="/search/label/SEO"><i class="fas fa-chevron-left"></i> تحسين محركات البحث</a></li>
+                    <li><a href="/search/label/WordPress"><i class="fas fa-chevron-left"></i> ووردبريس</a></li>
+                    <li><a href="/search/label/Blogger"><i class="fas fa-chevron-left"></i> بلوجر</a></li>
+                    <li><a href="/search/label/Tutorials"><i class="fas fa-chevron-left"></i> شروحات</a></li>
+                    <li><a href="/search/label/Android"><i class="fas fa-chevron-left"></i> أندرويد</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>النشرة البريدية</h3>
+                <p>اشترك ليصلك كل جديد من مقالات وشروحات وأدوات ذكاء اصطناعي حصرية.</p>
+                <form class="newsletter-form" id="newsletter-form">
+                    <input type="email" class="newsletter-input" placeholder="بريدك الإلكتروني" required>
+                    <button type="submit" class="newsletter-button">اشتراك الآن</button>
+                </form>
+                <p style="font-size:0.85rem; margin-top:0.5rem; opacity:0.8;">نعد بعدم مشاركة بريدك مع أي طرف آخر.</p>
+            </div>
+
+            <div class="copyright">
+                &copy; <span id="current-year"></span> مدونة العرائش التقنية | جميع الحقوق محفوظة : عماد الدين لمراني
+            </div>
+        </div>
+    </footer>
+
+    <!-- زر العودة للأعلى -->
+    <a href="#" class="back-to-top" id="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <!-- مساعد الذكاء الاصطناعي العائم -->
+    <div class="ai-assistant-widget">
+        <div class="ai-chat-container" id="ai-chat-container">
+            <div class="ai-chat-header">
+                <h4><i class="fas fa-robot"></i> المساعد الذكي للبحث</h4>
+                <button class="ai-close-btn" id="ai-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="ai-chat-body" id="ai-chat-body">
+                <div class="ai-message bot">
+                    <p>مرحباً! أنا المساعد الذكي لمدونة العرائش التقنية. يمكنني مساعدتك في العثور على المقالات ذات الصلة أو تلخيص المحتوى. اسألني عن أي موضوع تقني!</p>
+                </div>
+            </div>
+            <div class="ai-chat-input-area">
+                <input type="text" class="ai-chat-input" id="ai-chat-input" placeholder="اكتب سؤالك هنا...">
+                <button class="ai-send-btn" id="ai-send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        <!-- زر فتح الدردشة يظهر خارج الحاوية -->
+    </div>
+
+    <!-- الجافاسكريبت المتقدم -->
+    <script>
+        // ============= التهيئة العامة والمتغيرات =============
+        document.addEventListener('DOMContentLoaded', function() {
+            // تحديث السنة في الفوتر
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // تعريف متغيرات عامة
+            const BLOG_URL = "https://greatxenforo.blogspot.com/";
+            let allPosts = []; // لتخزين جميع المقالات للبحث الذكي
+            let allCategories = []; // لتخزين جميع التصنيفات
+            let recentPostsLoaded = false;
+            let categoriesLoaded = false;
+            let sitemapLoaded = false;
+            let isAIAssistantOpen = false;
+
+            // عناصر DOM رئيسية
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = themeToggle.querySelector('i');
+            const html = document.documentElement;
+            const backToTopButton = document.getElementById('back-to-top');
+            const progressBar = document.getElementById('reading-progress');
+            const mainTabs = document.querySelectorAll('.content-tab');
+            const mainSections = document.querySelectorAll('.content-section');
+            const aiAssistantToggle = document.getElementById('ai-assistant-toggle');
+            const aiChatContainer = document.getElementById('ai-chat-container');
+            const aiCloseBtn = document.getElementById('ai-close-btn');
+            const aiChatBody = document.getElementById('ai-chat-body');
+            const aiChatInput = document.getElementById('ai-chat-input');
+            const aiSendBtn = document.getElementById('ai-send-btn');
+            const smartSearchInput = document.getElementById('smart-search-input');
+            const searchSuggestions = document.getElementById('search-suggestions');
+            const searchButton = document.getElementById('search-button');
+
+            // ============= الوضع الليلي/النهاري =============
+            const savedTheme = localStorage.getItem('theme') || 
+                              (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            if (savedTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = html.getAttribute('data-theme');
+                if (currentTheme === 'light') {
+                    html.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    themeIcon.className = 'fas fa-sun';
+                } else {
+                    html.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                    themeIcon.className = 'fas fa-moon';
+                }
+            });
+
+            // ============= زر العودة للأعلى =============
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+            
+            backToTopButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // ============= شريط التقدم =============
+            window.addEventListener('scroll', () => {
+                const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                if (height > 0) {
+                    const scrolled = (winScroll / height) * 100;
+                    progressBar.style.width = scrolled + '%';
+                }
+            });
+
+            // ============= التبويبات الرئيسية =============
+            mainTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // إزالة النشاط من جميع التبويبات
+                    mainTabs.forEach(t => t.classList.remove('active'));
+                    mainSections.forEach(s => s.classList.remove('active-section'));
+                    
+                    // إضافة النشاط للتبويب والقسم المحدد
+                    tab.classList.add('active');
+                    const targetSection = document.getElementById(tab.dataset.target);
+                    if (targetSection) {
+                        targetSection.classList.add('active-section');
+                        
+                        // تحميل محتوى القسم عند الظهور لأول مرة (Lazy Loading)
+                        if (tab.dataset.target === 'recent-posts' && !recentPostsLoaded) {
+                            loadRecentPosts();
+                            recentPostsLoaded = true;
+                        } else if (tab.dataset.target === 'categories' && !categoriesLoaded) {
+                            loadCategories();
+                            categoriesLoaded = true;
+                        } else if (tab.dataset.target === 'sitemap' && !sitemapLoaded) {
+                            loadSitemap();
+                            sitemapLoaded = true;
+                        }
+                    }
+                    
+                    // التمرير للنصف العلوي للقسم
+                    setTimeout(() => {
+                        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                });
+            });
+
+            // ============= البحث الذكي مع الاقتراحات =============
+            let searchTimeout;
+            smartSearchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+                
+                if (query.length === 0) {
+                    searchSuggestions.classList.remove('active');
+                    return;
+                }
+                
+                // إظهار رسالة "جاري البحث" أثناء الانتظار
+                searchSuggestions.innerHTML = '<div class="suggestion-item"><div class="title">جاري البحث...</div></div>';
+                searchSuggestions.classList.add('active');
+                
+                // البحث بعد تأخير صغير (Debouncing)
+                searchTimeout = setTimeout(() => {
+                    performSmartSearch(query);
+                }, 300);
+            });
+            
+            // إغلاق الاقتراحات عند النقر خارجها
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-container')) {
+                    searchSuggestions.classList.remove('active');
+                }
+            });
+            
+            // البحث عند النقر على زر البحث أو الضغط على Enter
+            function executeSearch() {
+                const query = smartSearchInput.value.trim();
+                if (query) {
+                    // إغلاق الاقتراحات
+                    searchSuggestions.classList.remove('active');
+                    // البحث الفعلي - يمكن توجيه المستخدم لصفحة نتائج البحث
+                    window.location.href = `/search?q=${encodeURIComponent(query)}`;
+                }
+            }
+            
+            searchButton.addEventListener('click', executeSearch);
+            smartSearchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') executeSearch();
+            });
+            
+            // دالة البحث الذكي
+            function performSmartSearch(query) {
+                if (allPosts.length === 0) {
+                    // إذا لم يتم تحميل المقالات بعد
+                    searchSuggestions.innerHTML = '<div class="suggestion-item"><div class="title">جاري تحميل البيانات...</div></div>';
+                    return;
+                }
+                
+                const normalizedQuery = query.toLowerCase();
+                const results = allPosts.filter(post => {
+                    const title = post.title.$t.toLowerCase();
+                    const categories = post.category ? post.category.map(cat => cat.term.toLowerCase()).join(' ') : '';
+                    return title.includes(normalizedQuery) || categories.includes(normalizedQuery);
+                }).slice(0, 5); // عرض أول 5 نتائج فقط
+                
+                if (results.length > 0) {
+                    let suggestionsHTML = '';
+                    results.forEach(post => {
+                        const title = post.title.$t;
+                        const category = post.category && post.category.length > 0 ? post.category[0].term : 'عام';
+                        let postLink = '';
+                        for (let i = 0; i < post.link.length; i++) {
+                            if (post.link[i].rel === "alternate") {
+                                postLink = post.link[i].href;
+                                break;
+                            }
+                        }
+                        
+                        suggestionsHTML += `
+                            <div class="suggestion-item" data-link="${postLink}">
+                                <div class="title">${highlightText(title, query)}</div>
+                                <div class="category">${category}</div>
+                            </div>
+                        `;
+                    });
+                    searchSuggestions.innerHTML = suggestionsHTML;
+                    
+                    // إضافة حدث النقر على الاقتراحات
+                    document.querySelectorAll('.suggestion-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            const link = this.getAttribute('data-link');
+                            if (link) window.location.href = link;
+                        });
+                    });
+                } else {
+                    searchSuggestions.innerHTML = '<div class="suggestion-item"><div class="title">لا توجد نتائج تطابق بحثك</div></div>';
+                }
+            }
+            
+            // دالة لتظليل النص المطابق في البحث
+            function highlightText(text, query) {
+                if (!query) return text;
+                const regex = new RegExp(`(${query})`, 'gi');
+                return text.replace(regex, '<span style="background-color: #ffeb3b; color: #000; padding: 0 2px; border-radius: 2px;">$1</span>');
+            }
+
+            // ============= مساعد الذكاء الاصطناعي =============
+            aiAssistantToggle.addEventListener('click', () => {
+                isAIAssistantOpen = !isAIAssistantOpen;
+                if (isAIAssistantOpen) {
+                    aiChatContainer.classList.add('active');
+                    aiAssistantToggle.innerHTML = '<i class="fas fa-times"></i>';
+                    aiAssistantToggle.setAttribute('aria-label', 'إغلاق المساعد الذكي');
+                    // تركيز على حقل الإدخال عند الفتح
+                    setTimeout(() => aiChatInput.focus(), 300);
+                } else {
+                    aiChatContainer.classList.remove('active');
+                    aiAssistantToggle.innerHTML = '<i class="fas fa-robot"></i>';
+                    aiAssistantToggle.setAttribute('aria-label', 'فتح المساعد الذكي');
+                }
+            });
+            
+            aiCloseBtn.addEventListener('click', () => {
+                aiChatContainer.classList.remove('active');
+                aiAssistantToggle.innerHTML = '<i class="fas fa-robot"></i>';
+                aiAssistantToggle.setAttribute('aria-label', 'فتح المساعد الذكي');
+                isAIAssistantOpen = false;
+            });
+            
+            // إرسال رسالة في الدردشة
+            function sendAIMessage() {
+                const message = aiChatInput.value.trim();
+                if (!message) return;
+                
+                // إضافة رسالة المستخدم
+                addAIMessage(message, 'user');
+                aiChatInput.value = '';
+                
+                // إظهار مؤشر الكتابة
+                showAITypingIndicator();
+                
+                // محاكاة استجابة الذكاء الاصطناعي (في الإصدار النهائي، استبدل هذا باتصال API حقيقي)
+                setTimeout(() => {
+                    removeAITypingIndicator();
+                    // هذا رد محاكاة. في التطبيق الفعلي، استدعِ API الذكاء الاصطناعي هنا
+                    const aiResponse = generateAIResponse(message);
+                    addAIMessage(aiResponse, 'bot');
+                }, 1500);
+            }
+            
+            aiSendBtn.addEventListener('click', sendAIMessage);
+            aiChatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendAIMessage();
+            });
+            
+            // دالة لإضافة رسالة إلى الدردشة
+            function addAIMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `ai-message ${sender}`;
+                messageDiv.innerHTML = `<p>${text}</p>`;
+                aiChatBody.appendChild(messageDiv);
+                // التمرير لأسفل لعرض الرسالة الجديدة
+                aiChatBody.scrollTop = aiChatBody.scrollHeight;
+            }
+            
+            // مؤشر الكتابة
+            function showAITypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'ai-message bot ai-typing';
+                typingDiv.id = 'ai-typing-indicator';
+                typingDiv.innerHTML = '<span>.</span><span>.</span><span>.</span>';
+                aiChatBody.appendChild(typingDiv);
+                aiChatBody.scrollTop = aiChatBody.scrollHeight;
+            }
+            
+            function removeAITypingIndicator() {
+                const typingIndicator = document.getElementById('ai-typing-indicator');
+                if (typingIndicator) typingIndicator.remove();
+            }
+            
+            // دالة محاكاة لرد الذكاء الاصطناعي (استبدلها باتصال API حقيقي)
+            function generateAIResponse(query) {
+                const responses = [
+                    `لقد سألت عن "${query}". بناءً على محتوى المدونة، يمكنني أن أوصي بمقالات حول هذا الموضوع. جاري البحث...`,
+                    `سؤال رائع! لدى المدونة عدة مقالات تتناول "${query}". دعني أبحث لك عن الأكثر صلة.`,
+                    `بالنسبة لسؤالك عن "${query}"، أنصحك بالاطلاع على قسم الشروحات في المدونة حيث يوجد محتوى مفصل حول هذا الموضوع.`,
+                    `لاحظت اهتمامك بـ"${query}". لدى المدونة محتوى غني في هذا المجال، يمكنك استخدام البحث في الأعلى للعثور على مقالات محددة.`
+                ];
+                
+                // محاكاة البحث في المقالات
+                const matchingPosts = allPosts.filter(post => 
+                    post.title.$t.toLowerCase().includes(query.toLowerCase()) ||
+                    (post.category && post.category.some(cat => cat.term.toLowerCase().includes(query.toLowerCase())))
+                ).slice(0, 3);
+                
+                let response = responses[Math.floor(Math.random() * responses.length)];
+                
+                if (matchingPosts.length > 0) {
+                    response += "<br><br>إليك بعض المقالات المقترحة:<br>";
+                    matchingPosts.forEach(post => {
+                        let postLink = '';
+                        for (let i = 0; i < post.link.length; i++) {
+                            if (post.link[i].rel === "alternate") {
+                                postLink = post.link[i].href;
+                                break;
+                            }
+                        }
+                        response += `<br>• <a href="${postLink}" style="color: #4361ee;">${post.title.$t}</a>`;
+                    });
+                }
+                
+                return response;
+            }
+
+            // ============= أدوات الذكاء الاصطناعي للمدون =============
+            const aiGeneratorForm = document.getElementById('ai-generator-form');
+            const aiGenerateBtn = document.getElementById('ai-generate-btn');
+            const aiResult = document.getElementById('ai-result');
+            const generatedDescription = document.getElementById('generated-description');
+            const generatedTags = document.getElementById('generated-tags');
+            
+            aiGeneratorForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const postTitle = document.getElementById('post-title').value;
+                const postContent = document.getElementById('post-content').value;
+                
+                if (!postTitle || !postContent) {
+                    alert('يرجى ملء عنوان المقالة ومحتواها');
+                    return;
+                }
+                
+                // عرض حالة التحميل
+                aiGenerateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التوليد...';
+                aiGenerateBtn.disabled = true;
+                
+                // محاكاة اتصال API الذكاء الاصطناعي (استبدل هذا باتصال حقيقي)
+                setTimeout(() => {
+                    // توليد وصف تعريفي
+                    const description = `مقالة شاملة عن ${postTitle} توضح أهم النقاط والمفاهيم. ${postContent.substring(0, 120)}...`;
+                    
+                    // توليد وسوم (كلمات مفتاحية)
+                    const tags = extractKeywords(postTitle + ' ' + postContent.substring(0, 500));
+                    
+                    // عرض النتائج
+                    generatedDescription.textContent = description;
+                    generatedTags.innerHTML = '';
+                    tags.forEach(tag => {
+                        const tagSpan = document.createElement('span');
+                        tagSpan.className = 'tag';
+                        tagSpan.textContent = tag;
+                        generatedTags.appendChild(tagSpan);
+                    });
+                    
+                    aiResult.classList.add('active');
+                    aiGenerateBtn.innerHTML = '<i class="fas fa-robot"></i> توليد بالذكاء الاصطناعي';
+                    aiGenerateBtn.disabled = false;
+                    
+                    // التمرير إلى النتائج
+                    aiResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 2000);
+            });
+            
+            // دالة لاستخراج الكلمات المفتاحية (محاكاة - استبدل بخوارزمية حقيقية)
+            function extractKeywords(text) {
+                // هذه دالة محاكاة بسيطة. في التطبيق الفعلي، استخدم خدمة NLP أو API
+                const commonWords = ['من', 'إلى', 'في', 'على', 'أن', 'هو', 'هي', 'كان', 'يكون', 'مع', 'ما'];
+                const words = text.split(/\s+/).filter(word => 
+                    word.length > 3 && !commonWords.includes(word.toLowerCase())
+                );
+                
+                // أخذ الكلمات الأكثر تكراراً
+                const wordCount = {};
+                words.forEach(word => {
+                    const cleanWord = word.replace(/[^\w\u0600-\u06FF]/g, '');
+                    if (cleanWord) {
+                        wordCount[cleanWord] = (wordCount[cleanWord] || 0) + 1;
+                    }
+                });
+                
+                return Object.entries(wordCount)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 8)
+                    .map(entry => entry[0]);
+            }
+
+            // ============= تحميل المقالات الحديثة =============
+            function loadRecentPosts() {
+                const loadingEl = document.getElementById('recent-loading');
+                const postsContainer = document.getElementById('recent-posts-container');
+                const tabHeader = document.getElementById('recent-tab-header');
+                
+                // دالة رد JSONP
+                const callbackName = 'recentCallback_' + Math.random().toString(36).substring(2);
+                window[callbackName] = function(data) {
+                    const entries = data.feed.entry || [];
+                    allPosts = entries; // حفظ المقالات للبحث الذكي
+                    
+                    if (entries.length === 0) {
+                        loadingEl.innerHTML = '<p>لا توجد مقالات حديثة</p>';
+                        return;
+                    }
+                    
+                    // تحديث العداد في شارة التبويب
+                    const badge = document.getElementById('recent-count-badge');
+                    if (badge && entries.length > 0) {
+                        badge.textContent = entries.length;
+                    }
+                    
+                    // استخراج التصنيفات الفريدة
+                    const categoriesMap = {};
+                    entries.forEach(entry => {
+                        if (entry.category) {
+                            entry.category.forEach(cat => {
+                                if (!categoriesMap[cat.term]) {
+                                    categoriesMap[cat.term] = [];
+                                }
+                                categoriesMap[cat.term].push(entry);
+                            });
+                        }
+                    });
+                    
+                    const categories = Object.keys(categoriesMap);
+                    allCategories = categories; // حفظ التصنيفات
+                    
+                    // إنشاء أزرار التبويب للتصنيفات
+                    let tabButtonsHTML = '';
+                    categories.slice(0, 6).forEach((cat, index) => { // عرض أول 6 تصنيفات فقط
+                        const activeClass = index === 0 ? 'active' : '';
+                        const count = categoriesMap[cat].length;
+                        tabButtonsHTML += `
+                            <button class="modern-tab-btn ${activeClass}" data-category="${cat}">
+                                ${cat} <span class="badge">${count}</span>
+                            </button>
+                        `;
+                    });
+                    
+                    // إضافة تبويب "الكل" إذا كان هناك أكثر من تصنيف
+                    if (categories.length > 1) {
+                        tabButtonsHTML = `
+                            <button class="modern-tab-btn active" data-category="all">
+                                الكل <span class="badge">${entries.length}</span>
+                            </button>
+                        ` + tabButtonsHTML;
+                    }
+                    
+                    tabHeader.innerHTML = tabButtonsHTML;
+                    
+                    // إنشاء محتوى المقالات للتبويب "الكل"
+                    let postsHTML = '';
+                    entries.slice(0, 12).forEach(entry => { // عرض أول 12 مقالة فقط
+                        postsHTML += generatePostCardHTML(entry);
+                    });
+                    
+                    postsContainer.innerHTML = postsHTML;
+                    
+                    // إظهار المحتوى وإخفاء مؤشر التحميل
+                    loadingEl.style.display = 'none';
+                    postsContainer.style.display = 'grid';
+                    
+                    // إضافة أحداث النقر لأزرار التبويب
+                    tabHeader.querySelectorAll('.modern-tab-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            // إزالة النشاط من جميع الأزرار
+                            tabHeader.querySelectorAll('.modern-tab-btn').forEach(b => b.classList.remove('active'));
+                            // إضافة النشاط للزر المحدد
+                            this.classList.add('active');
+                            
+                            const category = this.dataset.category;
+                            let filteredPosts = [];
+                            
+                            if (category === 'all') {
+                                filteredPosts = entries.slice(0, 12);
+                            } else {
+                                filteredPosts = categoriesMap[category] || [];
+                            }
+                            
+                            // عرض المقالات المصفاة
+                            let filteredHTML = '';
+                            filteredPosts.slice(0, 12).forEach(entry => {
+                                filteredHTML += generatePostCardHTML(entry);
+                            });
+                            
+                            postsContainer.innerHTML = filteredHTML || '<p>لا توجد مقالات في هذا التصنيف</p>';
+                        });
+                    });
+                    
+                    // مسح دالة رد JSONP من الذاكرة
+                    delete window[callbackName];
+                };
+                
+                // تحميل البيانات من Blogger API
+                const script = document.createElement('script');
+                script.src = `${BLOG_URL}/feeds/posts/summary?alt=json-in-script&max-results=50&orderby=published&callback=${callbackName}`;
+                document.head.appendChild(script);
+            }
+            
+            // دالة مساعدة لإنشاء بطاقة مقالة
+            function generatePostCardHTML(entry) {
+                let entryLink = '';
+                for (let i = 0; i < entry.link.length; i++) {
+                    if (entry.link[i].rel === "alternate") {
+                        entryLink = entry.link[i].href;
+                        break;
+                    }
+                }
+                
+                let thumbnail = '';
+                if (entry.media$thumbnail) {
+                    // استخدام srcset للصور المتجاوبة
+                    const thumbUrl = entry.media$thumbnail.url;
+                    thumbnail = `<img class="post-thumbnail" src="${thumbUrl}" alt="${entry.title.$t}" loading="lazy">`;
+                } else {
+                    thumbnail = `<div class="post-thumbnail" style="background: linear-gradient(45deg, #4361ee, #f72585); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                        <i class="fas fa-file-alt"></i>
+                    </div>`;
+                }
+                
+                let excerpt = '';
+                if (entry.summary) {
+                    excerpt = entry.summary.$t.replace(/<[^>]*>/g, '').substring(0, 140) + '...';
+                }
+                
+                let category = 'عام';
+                if (entry.category && entry.category.length > 0) {
+                    category = entry.category[0].term;
+                }
+                
+                const pubDate = new Date(entry.published.$t);
+                const formattedDate = `${pubDate.getDate()}/${pubDate.getMonth()+1}/${pubDate.getFullYear()}`;
+                
+                return `
+                    <article class="post-card">
+                        ${thumbnail}
+                        <div class="post-content">
+                            <h3 class="post-title">
+                                <a href="${entryLink}">${entry.title.$t}</a>
+                            </h3>
+                            <p class="post-excerpt">${excerpt}</p>
+                            <div class="post-meta">
+                                <span class="post-category">${category}</span>
+                                <span class="post-date">${formattedDate}</span>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }
+
+            // ============= تحميل الأقسام =============
+            function loadCategories() {
+                const loadingEl = document.getElementById('categories-loading');
+                const categoriesContainer = document.getElementById('categories-container');
+                
+                // إذا كانت المقالات قد حملت بالفعل، استخدمها
+                if (allCategories.length > 0) {
+                    displayCategories(allCategories);
+                    return;
+                }
+                
+                // دالة رد JSONP
+                const callbackName = 'categoriesCallback_' + Math.random().toString(36).substring(2);
+                window[callbackName] = function(data) {
+                    const entries = data.feed.entry || [];
+                    
+                    // استخراج التصنيفات الفريدة
+                    const categoriesSet = new Set();
+                    entries.forEach(entry => {
+                        if (entry.category) {
+                            entry.category.forEach(cat => {
+                                categoriesSet.add(cat.term);
+                            });
+                        }
+                    });
+                    
+                    const categories = Array.from(categoriesSet);
+                    allCategories = categories;
+                    
+                    displayCategories(categories);
+                    
+                    delete window[callbackName];
+                };
+                
+                const script = document.createElement('script');
+                script.src = `${BLOG_URL}/feeds/posts/summary?alt=json-in-script&max-results=100&callback=${callbackName}`;
+                document.head.appendChild(script);
+            }
+            
+            function displayCategories(categories) {
+                const loadingEl = document.getElementById('categories-loading');
+                const categoriesContainer = document.getElementById('categories-container');
+                
+                if (categories.length === 0) {
+                    loadingEl.innerHTML = '<p>لا توجد أقسام</p>';
+                    return;
+                }
+                
+                // ترتيب التصنيفات أبجدياً
+                categories.sort((a, b) => a.localeCompare(b));
+                
+                let categoriesHTML = '';
+                categories.forEach(category => {
+                    categoriesHTML += `
+                        <div class="sitemap-category">
+                            <h3>${category}</h3>
+                            <ul class="sitemap-links">
+                                <li><a href="/search/label/${encodeURIComponent(category)}">عرض جميع مقالات ${category}</a></li>
+                                <li><a href="/search/label/${encodeURIComponent(category)}?max-results=5">أحدث 5 مقالات في ${category}</a></li>
+                                <li><a href="/search/label/${encodeURIComponent(category)}?orderby=updated">مقالات ${category} (المحدثة أخيراً)</a></li>
+                            </ul>
+                        </div>
+                    `;
+                });
+                
+                categoriesContainer.innerHTML = categoriesHTML;
+                loadingEl.style.display = 'none';
+                categoriesContainer.style.display = 'grid';
+            }
+
+            // ============= تحميل خريطة الموقع (Lazy Loading) =============
+            function loadSitemap() {
+                const loadingEl = document.getElementById('sitemap-loading');
+                const sitemapContainer = document.getElementById('sitemap-container');
+                
+                // دالة رد JSONP
+                const callbackName = 'sitemapCallback_' + Math.random().toString(36).substring(2);
+                window[callbackName] = function(data) {
+                    const entries = data.feed.entry || [];
+                    
+                    if (entries.length === 0) {
+                        loadingEl.innerHTML = '<p>لا توجد مقالات لعرضها في خريطة الموقع</p>';
+                        return;
+                    }
+                    
+                    // تجميع المقالات حسب التصنيف
+                    const categoriesMap = {};
+                    entries.forEach(entry => {
+                        if (entry.category) {
+                            entry.category.forEach(cat => {
+                                if (!categoriesMap[cat.term]) {
+                                    categoriesMap[cat.term] = [];
+                                }
+                                categoriesMap[cat.term].push(entry);
+                            });
+                        } else {
+                            // إذا لم يكن هناك تصنيف
+                            if (!categoriesMap['عام']) {
+                                categoriesMap['عام'] = [];
+                            }
+                            categoriesMap['عام'].push(entry);
+                        }
+                    });
+                    
+                    // ترتيب التصنيفات أبجدياً
+                    const categories = Object.keys(categoriesMap).sort();
+                    
+                    let sitemapHTML = '<div class="sitemap-grid">';
+                    
+                    categories.forEach(category => {
+                        const categoryEntries = categoriesMap[category];
+                        
+                        // ترتيب المقالات أبجدياً داخل كل تصنيف
+                        categoryEntries.sort((a, b) => a.title.$t.localeCompare(b.title.$t));
+                        
+                        sitemapHTML += `
+                            <div class="sitemap-category">
+                                <h3>${category} (${categoryEntries.length})</h3>
+                                <ul class="sitemap-links">
+                        `;
+                        
+                        categoryEntries.forEach(entry => {
+                            let entryLink = '';
+                            for (let i = 0; i < entry.link.length; i++) {
+                                if (entry.link[i].rel === "alternate") {
+                                    entryLink = entry.link[i].href;
+                                    break;
+                                }
+                            }
+                            
+                            sitemapHTML += `
+                                <li>
+                                    <a href="${entryLink}">${entry.title.$t}</a>
+                                </li>
+                            `;
+                        });
+                        
+                        sitemapHTML += `
+                                </ul>
+                            </div>
+                        `;
+                    });
+                    
+                    sitemapHTML += '</div>';
+                    
+                    sitemapContainer.innerHTML = sitemapHTML;
+                    loadingEl.style.display = 'none';
+                    sitemapContainer.style.display = 'block';
+                    
+                    delete window[callbackName];
+                };
+                
+                const script = document.createElement('script');
+                script.src = `${BLOG_URL}/feeds/posts/summary?alt=json-in-script&max-results=100&callback=${callbackName}`;
+                document.head.appendChild(script);
+            }
+
+            // ============= تحميل البيانات الأولية =============
+            // تحميل المقالات الحديثة عند فتح الصفحة (لأن هذا القسم نشط افتراضياً)
+            loadRecentPosts();
+            
+            // رابط في الفوتر لفتح خريطة الموقع
+            document.getElementById('open-sitemap-footer').addEventListener('click', function(e) {
+                e.preventDefault();
+                // تفعيل تبويب خريطة الموقع
+                document.querySelector('.content-tab[data-target="sitemap"]').click();
+            });
+
+            // ============= نموذج النشرة البريدية =============
+            document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const emailInput = this.querySelector('.newsletter-input');
+                const email = emailInput.value.trim();
+                
+                if (!email || !isValidEmail(email)) {
+                    alert('يرجى إدخال بريد إلكتروني صحيح');
+                    return;
+                }
+                
+                // محاكاة إرسال النموذج
+                emailInput.value = '';
+                alert('شكراً لك على الاشتراك! ستتلقى آخر تحديثات المدونة قريباً.');
+            });
+            
+            function isValidEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
+            // ============= إضافة تأثيرات تفاعلية إضافية =============
+            // إضافة تأثير اهتزاز بسيط عند التمرير على عناصر القائمة
+            document.querySelectorAll('.menu-link, .footer-links a').forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(-5px)';
+                });
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
