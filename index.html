@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مدونة العرائش التقنية | عماد الدين لمراني</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #10b981;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-dim: #64748b;
+            --border: #e2e8f0;
+            --radius: 16px;
+        }
+
+        .dark-mode {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        /* حاوية المحتوى الرئيسية لضمان عدم خروج العناصر عن الشاشة */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* --- الهيدر المتجاوب --- */
+        header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .header-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { 
+            font-weight: 900; 
+            font-size: clamp(1.2rem, 5vw, 1.5rem); 
+            text-decoration: none; 
+            color: var(--primary); 
+        }
+
+        /* --- السلايدر المتجاوب --- */
+        .slider-grid {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 20px 0;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none; /* لإخفاء السكرول في فايرفوكس */
+        }
+        .slider-grid::-webkit-scrollbar { display: none; } /* إخفاء السكرول في كروم */
+
+        .slider-item {
+            min-width: 85%; /* يظهر جزء من الكارت التالي ليشجع على السحب في الموبايل */
+            height: 300px;
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            scroll-snap-align: center;
+            flex-shrink: 0;
+        }
+
+        /* --- شبكة المقالات (Main Layout) --- */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr; /* عمود واحد للموبايل تلقائياً */
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .post-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column; /* صورة فوق نص في الموبايل */
+        }
+        .post-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .post-info { padding: 20px; }
+        .post-info h3 { margin: 0 0 10px; font-size: 1.1rem; }
+        .post-info a { text-decoration: none; color: var(--text); }
+
+        /* --- قسم التصنيفات (Grid المتجاوب) --- */
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* تصغير تلقائي */
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .mini-card {
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .mini-card img { width: 100%; height: 100px; object-fit: cover; }
+        .mini-card h4 { font-size: 13px; padding: 10px; margin: 0; }
+
+        /* --- الفوتر المتجاوب --- */
+        footer {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* عمود واحد للموبايل */
+            gap: 30px;
+            text-align: center;
+        }
+
+        /* --- شاشات التابلت والأجهزة المتوسطة (768px فما فوق) --- */
+        @media (min-width: 768px) {
+            .slider-item { min-width: 300px; height: 350px; }
+            .post-card { flex-direction: row; height: 200px; } /* صورة بجانب النص */
+            .post-card img { width: 250px; height: 100%; }
+            .cat-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+            .footer-grid { grid-template-columns: repeat(3, 1fr); text-align: right; }
+        }
+
+        /* --- شاشات الحاسوب (1024px فما فوق) --- */
+        @media (min-width: 1024px) {
+            .main-layout { grid-template-columns: 1fr 320px; } /* رجوع السايد بار */
+        }
+
+        .section-title { border-right: 4px solid var(--secondary); padding-right: 15px; margin: 25px 0; }
+        
+        #theme-toggle {
+            background: var(--primary); color: white; border: none;
+            padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container header-box">
+        <a href="/" class="logo">مدونة العرائش 🔻</a>
+        <button id="theme-toggle" onclick="toggleDark()">الوضع الليلي</button>
+    </div>
+</header>
+
+<div class="container">
+    <div class="section-title"><h2>مواضيع مميزة</h2></div>
+    <div class="slider-grid" id="main-slider">
+        </div>
+
+    <div class="main-layout">
+        <main>
+            <div class="section-title"><h2>آخر المقالات</h2></div>
+            <div id="posts-container"></div>
+        </main>
+        
+        <aside>
+            <div class="section-title"><h2>الأقسام</h2></div>
+            <div id="sidebar-labels" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+        </aside>
+    </div>
+
+    <div class="section-title"><h2>شروحات تقنية</h2></div>
+    <div class="cat-grid" id="cat-posts-container"></div>
+</div>
+
+<footer>
+    <div class="container footer-grid">
+        <div>
+            <h3>عن المدونة</h3>
+            <p>منصة تقنية متخصصة في تقديم أحدث الحلول والدروس التقنية.</p>
+        </div>
+        <div>
+            <h3>روابط سريعة</h3>
+            <p><a href="#" style="color:white">اتصل بنا</a><br><a href="#" style="color:white">سياسة الخصوصية</a></p>
+        </div>
+        <div>
+            <h3>تابعنا</h3>
+            <p>فيسبوك - تويتر - يوتيوب</p>
+        </div>
+    </div>
+    <div class="container" style="text-align:center; margin-top:30px; border-top: 1px solid #334155; padding-top: 20px;">
+        جميع الحقوق محفوظة © 2026 | <span style="color:var(--secondary)">عماد الدين لمراني</span>
+    </div>
+</footer>
+
+<script>
+    const blogUrl = "https://greatxenforo.blogspot.com";
+
+    function toggleDark() {
+        document.body.classList.toggle('dark-mode');
+    }
+
+    // دالة جلب البيانات الموحدة لضمان الأداء
+    async function fetchData(url, callback) {
+        const script = document.createElement('script');
+        script.src = url + "&callback=" + callback;
+        document.body.appendChild(script);
+    }
+
+    // جلب المقالات الرئيسية
+    function getLatest() {
+        fetchData(`${blogUrl}/feeds/posts/summary?alt=json-in-script&max-results=6`, "renderLatest");
+    }
+
+    window.renderLatest = function(json) {
+        const container = document.getElementById('posts-container');
+        json.feed.entry.forEach(entry => {
+            const title = entry.title.$t;
+            const link = entry.link.find(l => l.rel === 'alternate').href;
+            const img = entry.media$thumbnail ? entry.media$thumbnail.url.replace('/s72-c/', '/w600-h400-p-k-no-nu/') : 'https://via.placeholder.com/600x400';
+            
+            container.innerHTML += `
+                <article class="post-card">
+                    <img src="${img}" alt="${title}">
+                    <div class="post-info">
+                        <h3><a href="${link}">${title}</a></h3>
+                        <p style="color:var(--text-dim); font-size:14px;">${entry.summary.$t.substring(0, 90)}...</p>
+                    </div>
+                </article><br>
+            `;
+        });
+    }
+
+    // جلب السلايدر والأقسام
+    function getExtras() {
+        fetchData(`${blogUrl}/feeds/posts/summary?alt=json-in-script&max-results=5`, "renderExtras");
+    }
+
+    window.renderExtras = function(json) {
+        const slider = document.getElementById('main-slider');
+        const labels = document.getElementById('sidebar-labels');
+
+        json.feed.entry.forEach(entry => {
+            const title = entry.title.$t;
+            const link = entry.link.find(l => l.rel === 'alternate').href;
+            const img = entry.media$thumbnail ? entry.media$thumbnail.url.replace('/s72-c/', '/w600-h800-p-k-no-nu/') : 'https://via.placeholder.com/400x600';
+            
+            slider.innerHTML += `
+                <div class="slider-item" onclick="location.href='${link}'">
+                    <img src="${img}">
+                    <div style="position:absolute; bottom:0; padding:20px; background:linear-gradient(transparent, rgba(0,0,0,0.8)); width:100%; color:white;">
+                        <h4 style="margin:0">${title}</h4>
+                    </div>
+                </div>
+            `;
+        });
+
+        json.feed.category.forEach(cat => {
+            labels.innerHTML += `<a href="/search/label/${cat.term}" style="background:var(--card); border:1px solid var(--border); padding:5px 12px; border-radius:20px; text-decoration:none; color:var(--text); font-size:12px;">${cat.term}</a>`;
+        });
+    }
+
+    // جلب القسم السفلي (شروحات)
+    function getCategory() {
+        // تأكد من وجود تسمية بهذا الاسم في مدونتك أو غيرها
+        fetchData(`${blogUrl}/feeds/posts/summary/-/شروحات?alt=json-in-script&max-results=4`, "renderCategory");
+    }
+
+    window.renderCategory = function(json) {
+        const container = document.getElementById('cat-posts-container');
+        if(!json.feed.entry) return;
+        json.feed.entry.forEach(entry => {
+            const title = entry.title.$t;
+            const link = entry.link.find(l => l.rel === 'alternate').href;
+            const img = entry.media$thumbnail ? entry.media$thumbnail.url.replace('/s72-c/', '/w300-h200-p-k-no-nu/') : 'https://via.placeholder.com/300x200';
+            
+            container.innerHTML += `
+                <div class="mini-card" onclick="location.href='${link}'">
+                    <img src="${img}">
+                    <h4>${title}</h4>
+                </div>
+            `;
+        });
+    }
+
+    window.onload = () => {
+        getLatest();
+        getExtras();
+        getCategory();
+    };
+</script>
+
+</body>
+</html>
